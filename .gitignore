@@ -1,0 +1,6 @@
+venv/
+.env
+.venv
+postgres-data/
+frontenv/src/jdblog.egg-info/
+frontenv/src/jdblog/__pycache__/
