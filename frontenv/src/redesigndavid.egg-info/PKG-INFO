@@ -1,0 +1,40 @@
+Metadata-Version: 2.4
+Name: redesigndavid
+Version: 0.1.0
+Summary: AIA CRM API
+Author: David Marte
+Author-email: redesigndavid@gmail.com
+License: MIT license
+Keywords: AIA CRM
+Requires-Python: >=3.6
+Requires-Dist: psycopg2-binary
+Requires-Dist: click
+Requires-Dist: fastapi[all]
+Requires-Dist: uvicorn[standard]
+Requires-Dist: fastapi
+Requires-Dist: sqlmodel
+Requires-Dist: python-multipart
+Requires-Dist: PyJWT
+Requires-Dist: requests[security]
+Requires-Dist: bcrypt
+Requires-Dist: pymongo
+Requires-Dist: luqum
+Provides-Extra: test
+Requires-Dist: pytest>=3; extra == "test"
+Requires-Dist: pytest-mock; extra == "test"
+Requires-Dist: coverage; extra == "test"
+Requires-Dist: isort; extra == "test"
+Requires-Dist: pinyin; extra == "test"
+Requires-Dist: faker; extra == "test"
+Dynamic: author
+Dynamic: author-email
+Dynamic: description
+Dynamic: keywords
+Dynamic: license
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+
+
