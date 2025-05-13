@@ -228,15 +228,16 @@ async def login(
     oauth: Annotated[OAuth, Depends(make_oauth)],
     provider: str,
 ):
-
     redirect_path = request.query_params.get("redirect", "/")
     state = urllib.parse.quote(json.dumps({"redirect": redirect_path}))
+
+    redirect_auth = request.url.components._replace(path=f"/auth/{provider}").geturl()
 
     request.session.clear()
     oauth_provider = getattr(oauth, provider)
     return await oauth_provider.authorize_redirect(
         request,
-        f"http://127.0.0.1:8000/auth/{provider}",
+        redirect_auth,
         state=state,
     )
 
