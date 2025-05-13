@@ -18,11 +18,11 @@ venv-dev: clean
 	. venv/bin/activate; pip install --only-binary=:all: -I -e  .[test]
 
 run-web-dev:
-	. venv/bin/activate; env JD_MODE=DEV fastapi dev frontenv/src/jdblog/main.py
+	. venv/bin/activate; env JD_MODE=DEV fastapi dev backend/src/jdblog/main.py
 
 
 run-web:
-	. venv/bin/activate; fastapi run frontenv/src/jdblog/main.py
+	. venv/bin/activate; fastapi run backend/src/jdblog/main.py
 
 
 coverage-test:
