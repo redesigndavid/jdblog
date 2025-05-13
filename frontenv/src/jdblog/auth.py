@@ -11,10 +11,11 @@ from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jdblog import database
-from jdblog.config import config
 from jwt.exceptions import InvalidTokenError
 from sqlmodel import select
+
+from jdblog import database
+from jdblog.config import config
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
@@ -114,9 +115,7 @@ def make_oauth():  # pragma: no cover
     oauth = OAuth(config=config)
     oauth.register(
         name="google",
-        server_metadata_url=(
-            "https://accounts.google.com/.well-known/openid-configuration",
-        ),
+        server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
         client_kwargs={
             "scope": "openid email profile",
             "prompt": "select_account",
