@@ -10,7 +10,6 @@ with open("README.md") as readme_file:
 
 requirements = [
     "psycopg2-binary",
-    "postgresql",
     "click",
     "fastapi[all]",
     "uvicorn[standard]",
