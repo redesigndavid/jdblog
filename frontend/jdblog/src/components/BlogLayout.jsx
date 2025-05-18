@@ -1,6 +1,14 @@
 import { Outlet } from "react-router";
 
+import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeProvider";
+
 function BlogLayout() {
+  const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
+
+  const handleClick = () => {
+    setIsDarkMode(!isDarkMode);
+  };
   return (
     <>
       <div className="w-dvw flex flex-row ">
@@ -8,7 +16,15 @@ function BlogLayout() {
         <div className="w-8xl flex flex-col">
           <div className="flex flex-row w-8xl rounded-b-xl py-4 bg-slate-100">
             <div className="flex-auto" />
-            <div className="place-items-center grid">HEADER</div>
+            <div className="place-items-center grid">
+              <div className="flex flex-row">
+                HEADER
+                <div className="dark:bg-amber-600 bg-green-300">
+                  {isDarkMode ? "Dark Mode" : "Light Mode"}
+                </div>
+                <button onClick={handleClick}>Hello </button>
+              </div>
+            </div>
             <div className="flex-auto" />
           </div>
           <div className="flex flex-col-reverse lg:flex-row ">
