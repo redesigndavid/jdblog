@@ -1,25 +1,32 @@
 "use client";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import React from "react";
+import React, { useContext } from "react";
 import Highlight from "react-highlight";
-import 'highlight.js/styles/ir-black.css'; 
+import "highlight.js/styles/ir-black.css";
+import { ThemeContext } from "./context/ThemeProvider";
 
+import { useState, useEffect } from "react";
 
 const FlattenPre = ({ children }) => {
-    const pretype = (<Highlight />).type;
-  if (
-    React.isValidElement(children) &&
-    children.type === pretype
-  ) {
+  const pretype = (<Highlight />).type;
+  if (React.isValidElement(children) && children.type === pretype) {
     return <>{children}</>;
   }
   // Default fallback
   return <pre>{children}</pre>;
 };
 
+function setDarkMode() {
+  const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);
+  document.getElementsByTagName("body")[0].classList.toggle("light", !darkMode);
+  return darkMode;
+}
+
 function Test() {
-    const markdown = `
+  const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
+  const markdown = `
 
 Quod creamur qua genitum iuvenemque germanam vagantem
 =====================================================
@@ -73,13 +80,28 @@ obstantia corona, custodia elige contentus valet
 [eiectat](http://bello.io/durastis.aspx). Malorum nos deum Stygias, tibi arma
 erat: est, est! Signum profana ferarum arcana supervolat pavida.
 `;
-    return (
-        <>
-            <div className="prose prose-xs prose-slate prose-pre:text-xs ">
-                <Markdown components={{code: Highlight, pre: FlattenPre}} remarkPlugins={[remarkGfm]}>{markdown}</Markdown>
-            </div>
-        </>
-    );
+    const handleClick = () => {
+        setIsDarkMode(!isDarkMode)
+    }
+
+  return (
+    <>
+      <div className="dark:bg-amber-600 bg-green-300">
+        {isDarkMode ? "Dark Mode" : "Light Mode"}
+      
+        <button onClick={handleClick}>
+            Hello </button>
+      </div>
+      <div className="prose prose-xs prose-slate prose-pre:text-xs ">
+        <Markdown
+          components={{ code: Highlight, pre: FlattenPre }}
+          remarkPlugins={[remarkGfm]}
+        >
+          {markdown}
+        </Markdown>
+      </div>
+    </>
+  );
 }
 
 export default Test;
