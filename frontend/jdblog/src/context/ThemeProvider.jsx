@@ -1,6 +1,5 @@
 import { useState, useEffect, createContext } from "react";
 
-
 // Add either dark or light className to body tag
 function setDarkMode(darkMode) {
   document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);
@@ -12,14 +11,14 @@ export const ThemeContext = createContext(null);
 
 function ThemeProvider({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return setDarkMode();
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   // Initialize
   useEffect(() => {
     // Set initial dark mode
     const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(darkMode);
+    setDarkMode(!darkMode);
 
     // Set a mediaquery change handler that matches dark mode with system preference.
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
