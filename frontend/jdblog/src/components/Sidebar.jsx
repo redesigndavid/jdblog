@@ -7,8 +7,8 @@ function Sidebar() {
     <>
       <div
         className={
-          (showSidebar ? "sticky opacity-100" : "hidden opacity-0") +
-          " xl:h-[600px] xl:h-dvh xl:flex flex-col"
+          (showSidebar ? "" : "max-xl:hidden max-xl:opacity-0") +
+          " xl:h-[600px] xl:h-dvh xl:flex flex-col "
         }
       >
         <div className="flex-auto"></div>
