@@ -1,8 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Gloria+Hallelujah&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Ancizar+Sans:ital,wght@0,100..1000;1,100..1000&family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Atma:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@config "../tailwind.config.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --breakpoint-xs: 30rem;
+}
+
+/* @layer base { */
+/*   a { */
+/*     color: var(--color-yellow-300); */
+/**/
+/*     @variant dark { */
+/*       color: var(--color-yellow-800); */
+/*     } */
+/*   } */
+/* } */
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -19,16 +34,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
   display: flex;
@@ -38,6 +43,7 @@ body {
 }
 
 h1 {
+  font-family: "Ancizar Serif", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-size: 3.2em;
   line-height: 1.1;
 }
@@ -49,7 +55,6 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }

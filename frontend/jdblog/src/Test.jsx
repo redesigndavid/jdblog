@@ -3,9 +3,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import React, { useContext } from "react";
 import Highlight from "react-highlight";
-import "highlight.js/styles/ir-black.css";
-
-import { useState, useEffect } from "react";
+import "./hljs.css";
 
 const FlattenPre = ({ children }) => {
   const pretype = (<Highlight />).type;
@@ -16,14 +14,8 @@ const FlattenPre = ({ children }) => {
   return <pre>{children}</pre>;
 };
 
-function setDarkMode() {
-  const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);
-  document.getElementsByTagName("body")[0].classList.toggle("light", !darkMode);
-  return darkMode;
-}
-
 function Test() {
+
   const markdown = `
 
 Quod creamur qua genitum iuvenemque germanam vagantem
@@ -52,7 +44,7 @@ Sicaniam in terrent Veneris favilla, quo ille: *maius* Pyramus lacrimis stabat
 fertilis virginis. Contra postarum montesque **caeli quam pomoque** succincta
 tenaci tamquam, et laesum de **arcus** placet: agna porrigis. Querenda in undis
 cum cum insuper, est quam mutant perfudit dabat loca placere narrantia maxima
-portat.
+portat. (Hello)[http://hello.com]
 
 > Donec fugit pereat et avia **corpore aequora verbis**! Laeva te mox, superos;
 > distat motu mando crepitantia, annoso. Aper per vulgus, matre, per ne nos hac
@@ -81,7 +73,7 @@ erat: est, est! Signum profana ferarum arcana supervolat pavida.
 
   return (
     <>
-      <div className="prose prose-xs prose-slate prose-pre:text-xs ">
+      <div className="prose prose-xs prose-slate dark:prose-invert prose-a:text-emerald-500 mx-auto">
         <Markdown
           components={{ code: Highlight, pre: FlattenPre }}
           remarkPlugins={[remarkGfm]}
