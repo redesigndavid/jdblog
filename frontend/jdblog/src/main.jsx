@@ -4,26 +4,28 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import "./index.css";
 import App from "./App.jsx";
 import Layout from "./components/Layout";
-import BlogLayout from "./components/BlogLayout";
 import Test from "./Test";
-import Post from "./components/Post";
+import PostLayout from "./components/PostLayout.jsx";
+import PostsLayout from "./components/PostsLayout.jsx";
+import TagPostsLayout from "./components/TagPostsLayout.jsx";
 import ThemeProvider from "./context/ThemeProvider";
+import LoginProvider from "./context/LoginProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout sidebar={false}/>}>
-            <Route index element={<App />} />
-          </Route>
-          <Route path="/" element={<Layout sidebar={true}/>}>
-            <Route element={<BlogLayout />}>
+        <LoginProvider>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<App />} />
               <Route path="test" element={<Test />} />
-              <Route path="post/:postid" element={<Post />} />
+              <Route path="tag/:tagName" element={<TagPostsLayout />} />
+              <Route path="blog/:postId" element={<PostLayout />} />
+              <Route path="blog" element={<PostsLayout />} />
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </LoginProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>,

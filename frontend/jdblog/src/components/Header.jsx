@@ -1,51 +1,77 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeProvider";
-import { SidebarShowContext } from "../context/SidebarShowProvider";
+import { MdOutlineLogin, MdOutlineLogout } from "react-icons/md";
+
+import { useNavigate } from "react-router";
 
 import profile from "/dmartephoto.png";
 import {
   AiFillSun,
   AiFillMoon,
-  AiOutlineMenu,
   AiFillGithub,
   AiFillInstagram,
   AiFillLinkedin,
 } from "react-icons/ai";
 import { RxRocket } from "react-icons/rx";
+import { LoginContext } from "../context/LoginProvider";
 
-function Header({sidebar}) {
+function Header() {
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
-  const { showSidebar, setSidebar } = useContext(SidebarShowContext);
+  const { logOut, loginInfo } = useContext(LoginContext);
 
   const handleClickDark = () => {
     setIsDarkMode(!isDarkMode);
   };
-  const handleClickSidebar = () => {
-    setSidebar(!showSidebar);
-  };
+
+  const navigate = useNavigate();
 
   return (
     <>
-      <div className="flex flex-row w-full py-4 ">
+      <div className="flex flex-row w-full py-3 dark:text-white text-dark">
         <div className="flex-auto" />
-        <div className="flex flex-row px-5 w-full xl:w-7xl">
-          <a href="/" className="pt-1 flex-1 dark:text-slate-300 text-xl text-slate-700  m-auto pl-0 xl:pl-4 flex flex-row gap-4">
+        <div className="flex flex-row w-full xl:w-7xl px-4 xl:px-0">
+          <div
+            onClick={() => {
+              navigate("/");
+            }}
+            className="pt-1 flex-1 m-auto flex flex-row gap-4 cursor-pointer"
+          >
             <img className="w-12 h-12 rounded-full hidden" src={profile} />
 
             <div className="w-12 h-12 rounded-full bg-blue-500 justify-items-center">
-              <RxRocket size={24} className="m-auto h-12 w-12 p-3 text-white"/>
+              <RxRocket size={24} className="m-auto h-12 w-12 p-3 text-white" />
             </div>
-            <div className="align-middle my-auto text-3xl invisible xs:visible">
-              <span className="font-extralight">David Marte</span>
-            </div>
-          </a>
-          <div className="flex flex-row gap-4">
-            <a
-              onClick={handleClickDark}
-              className="dark:text-white text-dark py-4"
+          </div>
+
+          <div className="h-12  justify-items-center flex flex-col py-5 px-8 cursor-pointer">
+            <div className="flex-auto" />
+            <div
+              onClick={() => {
+                navigate("/blog");
+              }}
             >
+              Blog
+            </div>
+            <div className="flex-auto" />
+          </div>
+
+          <div className="flex flex-row gap-4">
+            <div onClick={handleClickDark} className=" py-4 cursor-pointer">
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
-            </a>
+            </div>
+
+            {loginInfo && loginInfo["username"] ? (
+              <a onClick={logOut} className="dark:text-white text-dark py-4 cursor-pointer">
+                <MdOutlineLogout size={28} />
+              </a>
+            ) : (
+              <a
+                href="http://127.0.0.1:8000/login/google?redirect=http://localhost:5173"
+                className="dark:text-white text-dark py-4"
+              >
+                <MdOutlineLogin size={28} />
+              </a>
+            )}
 
             <a
               href="https://linkedin.com/in/redesigndavid"
@@ -64,12 +90,6 @@ function Header({sidebar}) {
               className="dark:text-white text-dark py-4"
             >
               <AiFillGithub size={28} />
-            </a>
-            <a
-              onClick={handleClickSidebar}
-              className={"dark:text-white text-dark py-4 xl:hidden " + (sidebar ? "" : "hidden")}
-            >
-              <AiOutlineMenu size={28} />
             </a>
           </div>
         </div>

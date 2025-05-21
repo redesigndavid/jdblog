@@ -2,9 +2,13 @@ import { useState, useEffect, createContext } from "react";
 
 // Add either dark or light className to body tag
 function setDarkMode(darkMode) {
-  document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);
-  document.getElementsByTagName("body")[0].classList.toggle("light", !darkMode);
-  return darkMode;
+  if (darkMode != undefined) {
+    document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);
+    document
+      .getElementsByTagName("body")[0]
+      .classList.toggle("light", !darkMode);
+    localStorage.setItem("darkmode", JSON.stringify(darkMode));
+  }
 }
 
 export const ThemeContext = createContext(null);
@@ -17,8 +21,13 @@ function ThemeProvider({ children }) {
   // Initialize
   useEffect(() => {
     // Set initial dark mode
-    const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(!darkMode);
+    var darkMode;
+    if (localStorage.darkmode == undefined) {
+      darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setDarkMode(darkMode);
+    } else {
+      setDarkMode(JSON.parse(localStorage.darkmode))
+    }
 
     // Set a mediaquery change handler that matches dark mode with system preference.
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");

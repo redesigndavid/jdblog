@@ -4,9 +4,10 @@ from typing import Annotated
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from jdblog import auth, database
 from sqlmodel import select
 from starlette.middleware.sessions import SessionMiddleware
+
+from jdblog import auth, blog, database
 
 MakeSession = Annotated[
     database.Session,
@@ -25,6 +26,7 @@ async def lifespan(app: FastAPI):  # pragma: no cover
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(auth.router, tags=["Authentication"])
+app.include_router(blog.router, tags=["Blog"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
