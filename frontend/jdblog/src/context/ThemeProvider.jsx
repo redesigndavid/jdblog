@@ -15,18 +15,11 @@ export const ThemeContext = createContext(null);
 
 function ThemeProvider({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-
-  // Initialize
-  useEffect(() => {
-    // Set initial dark mode
     var darkMode;
     if (localStorage.darkmode == undefined) {
       darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setDarkMode(darkMode);
     } else {
-      setDarkMode(JSON.parse(localStorage.darkmode))
+      darkMode = JSON.parse(localStorage.darkmode);
     }
 
     // Set a mediaquery change handler that matches dark mode with system preference.
@@ -35,9 +28,8 @@ function ThemeProvider({ children }) {
       setIsDarkMode(event.matches);
     };
     mediaQuery.addEventListener("change", handleChange);
-
-    return () => {};
-  }, []);
+    return darkMode;
+  });
 
   // Update body classNames each time isDarkMode is updated.
   useEffect(() => {
