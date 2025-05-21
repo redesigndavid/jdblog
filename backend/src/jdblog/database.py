@@ -3,10 +3,10 @@ import enum
 from typing import Annotated, List, Union
 
 from fastapi import Depends
-from jdblog.config import config
 from sqlalchemy import UniqueConstraint
-from sqlmodel import (Column, Enum, Field, Relationship, Session, SQLModel,
-                      create_engine)
+from sqlmodel import Column, Enum, Field, Relationship, Session, SQLModel, create_engine
+
+from jdblog.config import config
 
 
 class UserPassword(SQLModel):
@@ -91,10 +91,65 @@ class Token(SQLModel, table=True):
     )
 
 
+class PostTagLink(SQLModel, table=True):
+    post_id: int | None = Field(default=None, foreign_key="post.id", primary_key=True)
+    tag_name: str | None = Field(default=None, foreign_key="tag.name", primary_key=True)
+
+
 class Post(SQLModel, table=True):
     id: Union[int, None] = Field(default=None, primary_key=True)
     owner_id: int | None = Field(default=None, foreign_key="user.id")
-    owner: User = Relationship(back_populates="posts")
+    owner: User = Relationship(
+        back_populates="posts",
+        sa_relationship_kwargs={"lazy": "joined"},
+    )
+    title: str | None
+    excerpt: str | None
+    image: str | None
+    text: str | None
+    tags: list["Tag"] = Relationship(
+        back_populates="posts",
+        link_model=PostTagLink,
+        sa_relationship_kwargs={"lazy": "joined"},
+    )
+    created_date: datetime.datetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.UTC)
+    )
+
+
+class PostPublic(SQLModel):
+    id: int
+    owner: User | None = None
+    title: str | None
+    excerpt: str | None
+    image: str | None
+    text: str | None
+    tags: list["TagPublic"] = []
+    created_date: datetime.datetime
+
+
+class PostShortPublic(SQLModel):
+    title: str | None
+    image: str | None
+
+
+class Tag(SQLModel, table=True):
+    name: str = Field(default=None, primary_key=True)
+    posts: list[Post] = Relationship(
+        back_populates="tags",
+        link_model=PostTagLink,
+        sa_relationship_kwargs={"lazy": "joined"},
+    )
+
+
+class TagPublic(SQLModel):
+    name: str
+    posts: list[PostShortPublic] = []
+
+
+class TagPublicLongPost(SQLModel):
+    name: str
+    posts: list[PostPublic] = []
 
 
 engine = create_engine(config.get("DATABASE_URL"))

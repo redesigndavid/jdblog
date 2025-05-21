@@ -1,4 +1,5 @@
 import json
+import pprint
 import urllib.parse
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Callable, Optional, Union
@@ -167,6 +168,26 @@ def make_oauth():  # pragma: no cover
     return oauth
 
 
+AuthenticatedBearer = Depends(JWTBearer(auto_error=True))
+
+
+def get_current_user(
+    session: database.MakeSession,
+    credentials=AuthenticatedBearer,
+):
+    """Get all the users."""
+    _, user = session.exec(
+        select(database.Token, database.User).where(
+            database.Token.access_token == credentials.credentials,
+            database.User.username == database.Token.username,
+        )
+    ).first()
+    return user
+
+
+CurrentUser = Annotated[database.User, Depends(get_current_user)]
+
+
 @router.post("/register/password")
 async def register_user(
     user: database.RegisterUserPassword, session: database.MakeSession
@@ -231,7 +252,12 @@ async def login(
     redirect_path = request.query_params.get("redirect", "/")
     state = urllib.parse.quote(json.dumps({"redirect": redirect_path}))
 
-    redirect_auth = request.url.components._replace(path=f"/auth/{provider}").geturl()
+    redirect_auth = request.url.components._replace(
+        path=f"/auth/{provider}", query=None
+    ).geturl()
+
+    print(redirect_path)
+    print(redirect_auth)
 
     request.session.clear()
     oauth_provider = getattr(oauth, provider)
@@ -319,7 +345,6 @@ async def auth(
     redirect_path = state.get("redirect", "/")
 
     user = get_user_creator(provider)(token)
-    import pprint
 
     pprint.pprint(user)
     pprint.pprint(user.auth_identity)
@@ -388,4 +413,7 @@ def create_token(session, auth_identity):
     raise RuntimeError("Failed to create token")  # pragma: no cover
 
 
-AuthenticatedBearer = Depends(JWTBearer(auto_error=True))
+@router.get("/users/me")
+async def get_user(user: CurrentUser):
+    """Get all the users."""
+    return user
