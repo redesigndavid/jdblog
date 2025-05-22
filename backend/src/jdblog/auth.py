@@ -1,5 +1,4 @@
 import json
-import pprint
 import urllib.parse
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Callable, Optional, Union
@@ -174,7 +173,7 @@ AuthenticatedBearer = Depends(JWTBearer(auto_error=True))
 def get_current_user(
     session: database.MakeSession,
     credentials=AuthenticatedBearer,
-):
+) -> database.User:
     """Get all the users."""
     _, user = session.exec(
         select(database.Token, database.User).where(
@@ -256,9 +255,6 @@ async def login(
         path=f"/auth/{provider}", query=None
     ).geturl()
 
-    print(redirect_path)
-    print(redirect_auth)
-
     request.session.clear()
     oauth_provider = getattr(oauth, provider)
     return await oauth_provider.authorize_redirect(
@@ -295,7 +291,6 @@ def auth_github_user_creator(token: dict) -> database.User:
         url="https://api.github.com/user/emails",
         headers={"authorization": f"Bearer {token.get('access_token')}"},
     ).json()
-    print(emails)
     email = [email for email in emails if email.get("primary")][0]["email"]
 
     content = requests.get(
@@ -346,8 +341,6 @@ async def auth(
 
     user = get_user_creator(provider)(token)
 
-    pprint.pprint(user)
-    pprint.pprint(user.auth_identity)
     auth_identity = user.auth_identity
 
     # Only need to add the user, profile gets created too.

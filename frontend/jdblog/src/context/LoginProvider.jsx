@@ -24,13 +24,13 @@ function LoginProvider({ children }) {
   useEffect(() => {
     if (searchParams.get("access_token")) {
       axios
-        .get(`http://localhost:8000/users/me`, {
+        .get(`${import.meta.env.VITE_API_URL}/users/me`, {
           headers: {
             Authorization: `Bearer ${searchParams.get("access_token")}`,
           },
         })
         .then((res) => {
-          setLoginInfo(res.data);
+          setLoginInfo({...res.data, ...{access_token: searchParams.get("access_token")}});
         });
       setSearchParams({});
     }
