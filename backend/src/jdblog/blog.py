@@ -62,7 +62,7 @@ async def tag_post(
         select(database.Tag).where(database.Tag.name == tag.name)
     ).first()
     if dbtag is None:
-        tag = database.Tag.model_validate({"name": tag.name})
+        tag = database.Tag.model_validate(tag)
         session.add(tag)
         need_commit = True
     else:
@@ -99,6 +99,27 @@ async def untag_post(
     if tag in post.tags:
         post.tags.remove(tag)
         session.commit()
+
+
+@router.post("/post/{post_id}/comment", response_model=database.CommentPublic)
+async def comment_post(
+    post_id: int,
+    comment: database.Comment,
+    session: database.MakeSession,
+    current_user: auth.CurrentUser,
+):
+    post = session.exec(
+        select(database.Post).where(database.Post.id == post_id)
+    ).first()
+    if post is None:
+        return
+
+    comment = database.Comment.model_validate(comment)
+    post.comments.append(comment)
+    comment.owner = current_user
+    session.add(comment)
+    session.commit()
+    return comment
 
 
 @router.get("/tag", response_model=list[database.TagPublic])

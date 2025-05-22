@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Ancizar+Sans:ital,wght@0,100..1000;1,100..1000&family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Atma:wght@300;400;500;600;700&family=Roboto+Slab:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ancizar+Sans:ital,wght@0,100..1000;1,100..1000&family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Atma:wght@300;400;500;600;700&family=Fira+Code:wght@300..700&family=Roboto+Slab:wght@100..900&family=Victor+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @config "../tailwind.config.js";

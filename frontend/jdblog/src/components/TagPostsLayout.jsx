@@ -16,10 +16,10 @@ function TagPostLayout() {
   const { tagName } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/tag/${tagName}`).then((res) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/tag/${tagName}`).then((res) => {
       setPosts(res.data.posts);
     }, []);
-    axios.get(`http://localhost:8000/tag`).then((tags) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);

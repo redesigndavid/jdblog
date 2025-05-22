@@ -13,10 +13,10 @@ function PostLayout() {
   });
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/post`).then((res) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/post`).then((res) => {
       setPosts(res.data);
     }, []);
-    axios.get(`http://localhost:8000/tag`).then((tags) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);

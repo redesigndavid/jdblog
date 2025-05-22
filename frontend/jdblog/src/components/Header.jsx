@@ -43,7 +43,12 @@ function Header() {
             </div>
           </div>
 
-          <div className="h-12  justify-items-center flex flex-col py-5 px-8 cursor-pointer">
+          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
+            <div className="flex-auto" />
+            <div>Pages</div>
+            <div className="flex-auto" />
+          </div>
+          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
             <div className="flex-auto" />
             <div
               onClick={() => {
@@ -61,13 +66,16 @@ function Header() {
             </div>
 
             {loginInfo && loginInfo["username"] ? (
-              <a onClick={logOut} className="dark:text-white text-dark py-4 cursor-pointer">
+              <a
+                onClick={logOut}
+                className="py-4 cursor-pointer text-da"
+              >
                 <MdOutlineLogout size={28} />
               </a>
             ) : (
               <a
-                href="http://127.0.0.1:8000/login/google?redirect=http://localhost:5173"
-                className="dark:text-white text-dark py-4"
+                href={`${import.meta.env.VITE_API_URL}/login/google?redirect=${window.location.href}`}
+                className="py-4"
               >
                 <MdOutlineLogin size={28} />
               </a>
