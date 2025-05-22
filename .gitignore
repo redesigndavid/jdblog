@@ -1,5 +1,5 @@
 venv/
-.env
+.env*
 .venv
 postgres-data/
 backend/src/jdblog.egg-info/
