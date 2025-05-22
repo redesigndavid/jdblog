@@ -15,7 +15,13 @@ function Comment({ comment }) {
 
               <div className="text-xs text-stone-400 dark:text-stone-600 font-sans">
                 <time pubdate="" title={comment.created_date}>
-                  <TimeAgo date={comment.created_date} />
+                  <TimeAgo
+                    live={true}
+                    date={new Date(
+                      new Date(comment.created_date).toString().slice(0, 25) +
+                      " UTC",
+                    ).toString()}
+                  />
                 </time>
               </div>
             </div>
@@ -25,7 +31,6 @@ function Comment({ comment }) {
         <p className="text-stone-500 dark:text-stone-400 my-2">
           {comment.text}
         </p>
-
       </article>
     </>
   );
