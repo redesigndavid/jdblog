@@ -23,7 +23,7 @@ function GenericPostLayout({ title, tags, posts }) {
             </div>
           </div>
           <div className="xl:w-3xl w-5xl max-w-dvw leading-8 font-normal xl:px-0 px-4 flex flex-col gap-8 xl:py-0 py-4">
-            {Object.keys(rest).map((year) => (
+            {Object.keys(rest).sort((a, b) => b - a).map((year) => (
               <PostSections key={`year-${year}`} title={year} posts={rest[year]}/>
             ))}
           </div>
