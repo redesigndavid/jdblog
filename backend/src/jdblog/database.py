@@ -37,7 +37,7 @@ class User(SQLModel, table=True):  # type: ignore
         back_populates="user", sa_relationship_kwargs={"lazy": "joined"}
     )
 
-    posts: List["Post"] = Relationship(back_populates="owner")
+    articles: List["Article"] = Relationship(back_populates="owner")
     comments: List["Comment"] = Relationship(back_populates="owner")
 
 
@@ -51,6 +51,11 @@ class AuthProvider(str, enum.Enum):
     password = "password"
     google = "google"
     github = "github"
+
+
+class ArticleKind(str, enum.Enum):
+    post = "post"
+    page = "page"
 
 
 class AuthIdentity(SQLModel, table=True):
@@ -98,34 +103,38 @@ class Token(SQLModel, table=True):
     )
 
 
-class PostTagLink(SQLModel, table=True):
-    post_id: int | None = Field(default=None, foreign_key="post.id", primary_key=True)
+class ArticleTagLink(SQLModel, table=True):
+    article_id: int | None = Field(
+        default=None, foreign_key="article.id", primary_key=True
+    )
     tag_name: str | None = Field(default=None, foreign_key="tag.name", primary_key=True)
 
 
-class Post(SQLModel, table=True):
+class Article(SQLModel, table=True):
     id: Union[int, None] = Field(default=None, primary_key=True)
     owner_id: int | None = Field(default=None, foreign_key="user.id")
     owner: User = Relationship(
-        back_populates="posts",
+        back_populates="articles",
         sa_relationship_kwargs={"lazy": "joined"},
     )
+    kind: ArticleKind = Field(sa_column=Column(Enum(ArticleKind)))
     title: str | None
     excerpt: str | None
     image: str | None
     text: str | None
     tags: list["Tag"] = Relationship(
-        back_populates="posts",
-        link_model=PostTagLink,
+        back_populates="articles",
+        link_model=ArticleTagLink,
         sa_relationship_kwargs={"lazy": "joined"},
     )
-    comments: list["Comment"] = Relationship(back_populates="post")
+    comments: list["Comment"] = Relationship(back_populates="article")
     created_date: datetime.datetime = Field(
         default_factory=lambda: datetime.datetime.now(datetime.UTC)
     )
+    visits: list["Visit"] = Relationship(back_populates="article")
 
 
-class PostPublic(SQLModel):
+class ArticlePublic(SQLModel):
     id: int
     owner: User | None = None
     title: str | None
@@ -135,18 +144,19 @@ class PostPublic(SQLModel):
     tags: list["TagPublic"] = []
     created_date: datetime.datetime
     comments: list["CommentPublic"] = []
+    visits: list["VisitPublic"] = []
 
 
-class PostShortPublic(SQLModel):
+class ArticleShortPublic(SQLModel):
     title: str | None
     image: str | None
 
 
 class Tag(SQLModel, table=True):
     name: str = Field(default=None, primary_key=True)
-    posts: list[Post] = Relationship(
+    articles: list[Article] = Relationship(
         back_populates="tags",
-        link_model=PostTagLink,
+        link_model=ArticleTagLink,
         sa_relationship_kwargs={"lazy": "joined"},
     )
     created_date: datetime.datetime | None = Field(
@@ -159,18 +169,18 @@ class TagPublic(SQLModel):
     created_date: datetime.datetime
 
 
-class TagPublicLongPost(SQLModel):
+class TagPublicLongArticle(SQLModel):
     name: str
-    posts: list[PostPublic] = []
+    articles: list[ArticlePublic] = []
 
 
 class Comment(SQLModel, table=True):
     id: Union[int, None] = Field(default=None, primary_key=True)
-    post_id: int | None = Field(
+    article_id: int | None = Field(
         default=None,
-        foreign_key="post.id",
+        foreign_key="article.id",
     )
-    post: Post | None = Relationship(
+    article: Article | None = Relationship(
         back_populates="comments",
         sa_relationship_kwargs={"lazy": "joined"},
     )
@@ -193,6 +203,25 @@ class CommentPublic(SQLModel):
     text: str | None
     created_date: datetime.datetime | None
     id: int | None
+
+
+class Visit(SQLModel, table=True):
+    id: Union[int, None] = Field(default=None, primary_key=True)
+    path: str
+    article_type: str | None
+    created_date: datetime.datetime | None = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.UTC)
+    )
+    article_id: int | None = Field(default=None, foreign_key="article.id")
+    article: Article | None = Relationship(
+        back_populates="visits",
+        sa_relationship_kwargs={"lazy": "joined"},
+    )
+
+
+class VisitPublic(SQLModel):
+    created_date: datetime.datetime | None
+    path: str
 
 
 engine = create_engine(config.get("DATABASE_URL"))

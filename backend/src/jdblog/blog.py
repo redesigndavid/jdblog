@@ -1,5 +1,7 @@
-from fastapi import APIRouter
-from sqlmodel import select
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+from sqlmodel import func, select
 
 from jdblog import auth, database
 
@@ -7,55 +9,70 @@ from jdblog import auth, database
 router = APIRouter()
 
 
-@router.get("/post", response_model=list[database.PostPublic])
-async def get_posts(session: database.MakeSession):
+def get_kind(kind: str):
+    return getattr(database.ArticleKind, kind)
+
+
+GetKind = Annotated[database.ArticleKind, Depends(get_kind)]
+
+
+@router.get("/article/{kind}", response_model=list[database.ArticlePublic])
+async def get_articles(
+    session: database.MakeSession,
+    kind: GetKind,
+):
     return [
-        post
-        for post in session.exec(
+        article
+        for article in session.exec(
             select(
-                database.Post,
-            )
+                database.Article,
+            ).where(database.Article.kind == kind)
         ).unique()
     ]
 
 
-@router.get("/post/{post_id}", response_model=database.PostPublic)
-async def get_post(post_id: int, session: database.MakeSession):
-    post = session.exec(
+@router.get("/article/{kind}/{article_id}", response_model=database.ArticlePublic)
+async def get_article(article_id: int, kind: GetKind, session: database.MakeSession):
+    article = session.exec(
         select(
-            database.Post,
-        ).where(database.Post.id == post_id)
+            database.Article,
+        ).where(database.Article.id == article_id, database.Article.kind == kind)
     ).first()
-    return post
+    return article
 
 
-@router.post("/post/new", response_model=database.Post)
-async def create_post(
-    post: database.Post,
+@router.post("/article/{kind}/new", response_model=database.Article)
+async def create_article(
+    article: database.Article,
+    kind: GetKind,
     session: database.MakeSession,
     current_user: auth.CurrentUser,
 ):
-    post = database.Post.model_validate(post)
-    post.owner = current_user
-    session.add(post)
+    article.kind = kind
+    article = database.Article.model_validate(article)
+    article.owner = current_user
+    session.add(article)
     session.commit()
-    session.refresh(post)
-    return post
+    session.refresh(article)
+    return article
 
 
-@router.post("/post/{post_id}/tag")
-async def tag_post(
-    post_id: int,
+@router.post("/article/{kind}/{article_id}/tag")
+async def tag_article(
+    article_id: int,
     tag: database.Tag,
+    kind: GetKind,
     session: database.MakeSession,
     _current_user: auth.CurrentUser,
 ):
 
     need_commit = False
-    post = session.exec(
-        select(database.Post).where(database.Post.id == post_id)
+    article = session.exec(
+        select(database.Article).where(
+            database.Article.id == article_id, database.Article.kind == kind
+        )
     ).first()
-    if post is None:
+    if article is None:
         return
 
     dbtag = session.exec(
@@ -68,26 +85,28 @@ async def tag_post(
     else:
         tag = dbtag
 
-    if tag not in post.tags:
-        post.tags.append(tag)
+    if tag not in article.tags:
+        article.tags.append(tag)
         need_commit = True
 
     if need_commit:
         session.commit()
 
 
-@router.post("/post/{post_id}/untag")
-async def untag_post(
-    post_id: int,
+@router.post("/article/{kind}/{article_id}/untag")
+async def untag_article(
+    article_id: int,
     tag: database.Tag,
+    kind: GetKind,
     session: database.MakeSession,
     _current_user: auth.CurrentUser,
 ):
-
-    post = session.exec(
-        select(database.Post).where(database.Post.id == post_id)
+    article = session.exec(
+        select(database.Article).where(
+            database.Article.id == article_id, database.Article.kind == kind
+        )
     ).first()
-    if post is None:
+    if article is None:
         return
 
     dbtag = session.exec(
@@ -96,26 +115,31 @@ async def untag_post(
     if dbtag is None:
         return
 
-    if tag in post.tags:
-        post.tags.remove(tag)
+    if tag in article.tags:
+        article.tags.remove(tag)
         session.commit()
 
 
-@router.post("/post/{post_id}/comment", response_model=database.CommentPublic)
-async def comment_post(
-    post_id: int,
+@router.post(
+    "/article/{kind}/{article_id}/comment", response_model=database.CommentPublic
+)
+async def comment_article(
+    article_id: int,
     comment: database.Comment,
+    kind: GetKind,
     session: database.MakeSession,
     current_user: auth.CurrentUser,
 ):
-    post = session.exec(
-        select(database.Post).where(database.Post.id == post_id)
+    article = session.exec(
+        select(database.Article).where(
+            database.Article.id == article_id, database.Article.kind == kind
+        )
     ).first()
-    if post is None:
+    if article is None:
         return
 
     comment = database.Comment.model_validate(comment)
-    post.comments.append(comment)
+    article.comments.append(comment)
     comment.owner = current_user
     session.add(comment)
     session.commit()
@@ -133,13 +157,13 @@ async def get_tags(session: database.MakeSession):
                 )
             ).unique()
         ],
-        key=lambda tag: len(tag.posts),
+        key=lambda tag: len(tag.articles),
         reverse=True,
     )
     return tags
 
 
-@router.get("/tag/{tag_name}", response_model=database.TagPublicLongPost)
+@router.get("/tag/{tag_name}", response_model=database.TagPublicLongArticle)
 async def get_tag(session: database.MakeSession, tag_name: str):
     return session.exec(
         select(

@@ -16,14 +16,17 @@ function PostLayout() {
   const [post, setPost] = useState({ text: "" });
   const [comments, setComments] = useState([]);
   const addComment = (comment) => {
-    setComments([...comments, ...[comment]])
-  }
+    setComments([...comments, ...[comment]]);
+  };
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/post/${postId}`).then((res) => {
-      setPost(res.data);
-      setComments(res.data.comments);
-    });
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/article/post/${postId}`)
+      .then((res) => {
+        setPost(res.data);
+        setComments(res.data.comments);
+        document.title = `redesigndavid.com - ${res.data.title}`;
+      });
   }, []);
 
   return (
@@ -51,7 +54,9 @@ function PostLayout() {
           <div className="xl:w-3xl w-5xl max-w-dvw  xl:px-0 px-4">
             <div className="text-4xl py-4">Discussion</div>
             {comments?.map((comment) => {
-              return <Comment key={`comment-${comment.id}`} comment={comment} />;
+              return (
+                <Comment key={`comment-${comment.id}`} comment={comment} />
+              );
             })}
             <CommentForm postId={post["id"]} addComment={addComment} />
           </div>

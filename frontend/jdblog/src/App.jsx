@@ -6,18 +6,16 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [posts, setPosts] = useState(() => {
-    return [];
-  });
-
-  const [tags, setTags] = useState(() => {
-    return [];
-  });
+  const [posts, setPosts] = useState([])
+  const [popPosts, setPopPosts] = useState([])
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/post`).then((res) => {
-      setPosts(res.data);
-      console.log(res.data);
+    axios.get(`${import.meta.env.VITE_API_URL}/article/post`).then((res) => {
+      res.data.sort((b, a) => (new Date(a.created_date)).getTime() - (new Date(b.created_date)).getTime())
+      setPosts([...res.data]);
+      res.data.sort((b, a) => a.visits.length - b.visits.length)
+      setPopPosts([...res.data]);
     }, []);
     axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
       setTags(tags.data);
@@ -47,7 +45,7 @@ function App() {
         <div className="flex-col flex py-8 xl:flex-row">
           <div className="py-4 xl:py-0 xl:w-2xs w-5xl hh max-w-dvw flex flex-col gap-4 mx-auto xl:px-0 px-4">
             <div className="flex-row xl:flex-col flex gap-1 flex-wrap">
-              <div className="text-lg pb-4 font-black">Top tags</div>
+              <div className="text-lg xl:pb-4 xl:pr-0 pr-2 pb-0 my-auto font-black items-center justify-center ">Top tags</div>
               {tags &&
                 tags.slice(0, 5).map((tag) => {
                   return <Tag tagname={tag.name} key={`tag-${tag.name}`} />;
@@ -56,7 +54,7 @@ function App() {
           </div>
           <div className="xl:w-3xl w-5xl max-w-dvw leading-8 font-normal xl:px-0 px-4 flex flex-col gap-8 xl:py-0 py-4">
             <PostSections title="Latest posts" posts={posts.slice(0, 5)} />
-            <PostSections title="Popular posts" posts={posts.slice(0, 5)} />
+            <PostSections title="Popular posts" posts={popPosts.slice(0, 5)} />
           </div>
           <div className="flex-auto" />
         </div>

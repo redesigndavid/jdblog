@@ -1,8 +1,7 @@
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeProvider";
 import { MdOutlineLogin, MdOutlineLogout } from "react-icons/md";
-
-import { useNavigate } from "react-router";
+import { NavigationContext } from "../context/NavigationProvider";
 
 import profile from "/dmartephoto.png";
 import {
@@ -23,7 +22,7 @@ function Header() {
     setIsDarkMode(!isDarkMode);
   };
 
-  const navigate = useNavigate();
+  const { nav } = useContext(NavigationContext);
 
   return (
     <>
@@ -32,7 +31,7 @@ function Header() {
         <div className="flex flex-row w-full xl:w-7xl px-4 xl:px-0">
           <div
             onClick={() => {
-              navigate("/");
+              nav("/");
             }}
             className="pt-1 flex-1 m-auto flex flex-row gap-4 cursor-pointer"
           >
@@ -41,6 +40,7 @@ function Header() {
             <div className="w-12 h-12 rounded-full bg-blue-500 justify-items-center">
               <RxRocket size={24} className="m-auto h-12 w-12 p-3 text-white" />
             </div>
+            <div className="my-auto text-xl font-special">redesigndavid.com</div>
           </div>
 
           <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
@@ -52,7 +52,7 @@ function Header() {
             <div className="flex-auto" />
             <div
               onClick={() => {
-                navigate("/blog");
+                nav("/blog");
               }}
             >
               Blog
