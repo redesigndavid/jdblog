@@ -36,7 +36,7 @@ function HeaderLink({ link, name }) {
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
-  const { logOut, loginInfo } = useContext(LoginContext);
+  const { logOut, loginInfo, isAdmin } = useContext(LoginContext);
 
   const handleClickDark = () => {
     setIsDarkMode(!isDarkMode);
@@ -44,9 +44,16 @@ function Header() {
 
   const { nav } = useContext(NavigationContext);
 
+
+  console.log(loginInfo);
   return (
     <>
-      <div className="flex flex-row w-full py-3 dark:text-white text-dark">
+      <div
+        className={
+          "flex flex-row w-full py-3 dark:text-white text-dark " +
+          (isAdmin && " border-t-4  border-red-500")
+        }
+      >
         <div className="flex-auto" />
         <div className="flex flex-row w-full xl:w-7xl px-4 xl:px-0">
           <div
