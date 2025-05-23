@@ -170,17 +170,20 @@ def make_oauth():  # pragma: no cover
 AuthenticatedBearer = Depends(JWTBearer(auto_error=True))
 
 
-def get_current_user(
+async def get_current_user(
     session: database.MakeSession,
     credentials=AuthenticatedBearer,
 ) -> database.User:
     """Get all the users."""
-    _, user = session.exec(
-        select(database.Token, database.User).where(
-            database.Token.access_token == credentials.credentials,
-            database.User.username == database.Token.username,
-        )
-    ).first()
+    try:
+        _, user = session.exec(
+            select(database.Token, database.User).where(
+                database.Token.access_token == credentials.credentials,
+                database.User.username == database.Token.username,
+            )
+        ).first()
+    except:
+        raise KeyError
     return user
 
 

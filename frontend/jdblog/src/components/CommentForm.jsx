@@ -11,7 +11,7 @@ function CommentForm({ postId, addComment }) {
   const onSubmit = (data) => {
     axios
       .post(
-        `${import.meta.env.VITE_API_URL}/post/${postId}/comment`,
+        `${import.meta.env.VITE_API_URL}/article/{kind}/${postId}/comment`,
         { text: data.comment },
         { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
       )
@@ -28,7 +28,7 @@ function CommentForm({ postId, addComment }) {
     <>
       {chooseLogin && <ChooseLogin onClick={() => setChooseLogin(false)}/>}
       <div className="p-4 bg-stone-200 dark:bg-stone-800 rounded-xl mt-8 text-gray-700 dark:text-gray-200   ">
-        {(loginInfo.access_token && (
+        {(loginInfo?.access_token && (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className={"transition-all  " + (isFocus ? "h-42 " : "h-18")}

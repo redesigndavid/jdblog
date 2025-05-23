@@ -1,11 +1,14 @@
-import { useNavigate } from "react-router";
+import { useContext } from "react";
+import { NavigationContext } from "../context/NavigationProvider";
 function Tag({ tagname }) {
-  const navigate = useNavigate();
+
+  const { nav } = useContext(NavigationContext);
+
   return (
     <>
       <div
         onClick={() => {
-          navigate(`/tag/${tagname}`);
+          nav(`/tag/${tagname}`);
         }}
         className="flex flex-row text-black cursor-pointer"
       >

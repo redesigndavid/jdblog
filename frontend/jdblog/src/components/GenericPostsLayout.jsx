@@ -16,7 +16,7 @@ function GenericPostLayout({ title, tags, posts }) {
         <div className="py-5 xl:py-15 min-h-dvh flex flex-col xl:flex-row">
           <div className="py-4 xl:py-0 xl:w-2xs w-5xl hh max-w-dvw flex flex-col gap-4 mx-auto xl:px-0 px-4">
             <div className="flex-row xl:flex-col flex gap-1 flex-wrap">
-              <div className="text-lg pb-4 font-black">Top tags</div>
+              <div className="text-lg xl:pb-4 xl:pr-0 pr-2 pb-0 my-auto font-black items-center justify-center ">Tags</div>
               {tags && tags.slice(0, 10).map((tag) => {
                 return <Tag tagname={tag.name} key={`tag-${tag.name}`} />;
               })}

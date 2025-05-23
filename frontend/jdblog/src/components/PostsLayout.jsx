@@ -13,7 +13,7 @@ function PostLayout() {
   });
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/post`).then((res) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/article/post`).then((res) => {
       setPosts(res.data);
     }, []);
     axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {

@@ -10,22 +10,28 @@ import PostsLayout from "./components/PostsLayout.jsx";
 import TagPostsLayout from "./components/TagPostsLayout.jsx";
 import ThemeProvider from "./context/ThemeProvider";
 import LoginProvider from "./context/LoginProvider";
+import NavigationProvider from "./context/NavigationProvider";
+import Tracker from "./Tracker";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
       <BrowserRouter>
-        <LoginProvider>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<App />} />
-              <Route path="test" element={<Test />} />
-              <Route path="tag/:tagName" element={<TagPostsLayout />} />
-              <Route path="blog/:postId" element={<PostLayout />} />
-              <Route path="blog" element={<PostsLayout />} />
-            </Route>
-          </Routes>
-        </LoginProvider>
+        <NavigationProvider>
+          <LoginProvider>
+            <Tracker>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<App />} />
+                  <Route path="test" element={<Test />} />
+                  <Route path="tag/:tagName" element={<TagPostsLayout />} />
+                  <Route path="blog/:postId" element={<PostLayout />} />
+                  <Route path="blog" element={<PostsLayout />} />
+                </Route>
+              </Routes>
+            </Tracker>
+          </LoginProvider>
+        </NavigationProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>,

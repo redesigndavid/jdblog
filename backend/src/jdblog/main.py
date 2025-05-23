@@ -66,3 +66,10 @@ async def get_users(
             )
         )
     ]
+
+
+@app.post("/visit", response_model=database.Visit)
+def visit_path(session: MakeSession, visit: database.Visit):
+    session.add(visit)
+    session.commit()
+    return visit

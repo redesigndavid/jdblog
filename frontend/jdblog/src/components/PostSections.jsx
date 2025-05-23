@@ -1,7 +1,16 @@
-import Moment from "moment";
-import { useNavigate } from "react-router";
+
+import dateFormat from "dateformat";
+import { useContext } from "react";
+import { NavigationContext } from "../context/NavigationProvider";
+
+function correctTime(datetime) {
+  return dateFormat(new Date(
+    new Date(datetime).toString().slice(0, 25) +
+    " UTC",
+  ), "d mmmm, yyyy")
+}
 function PostSection({ title, posts }) {
-  const navigate = useNavigate();
+  const { nav } = useContext(NavigationContext);
   return (
     <div>
       <div className="xl:px-0 font-extrabold text-4xl line-clamp-1">
@@ -13,14 +22,14 @@ function PostSection({ title, posts }) {
           <div
             key={`post-${post.id}`}
             onClick={() => {
-              navigate(`/blog/${post.id}`);
+              nav(`/blog/${post.id}`);
             }}
             className="xl:flex-nowrap flex flex-col-reverse md:flex-row my-2 text-pretty text-xl cursor-pointer"
           >
             {post.title}
             <div className="flex-auto" />
             <div className="text-xs md:text-lg ">
-              {Moment(post.created_date.slice(0, 23)).format("d MMMM, YYYY")}
+              {correctTime(post.created_date)}
             </div>
           </div>
         ))}
