@@ -94,7 +94,8 @@ class Profile(SQLModel, table=True):
 
 
 class Token(SQLModel, table=True):
-    username: str = Field(default=None, primary_key=True)
+    id: Union[int, None] = Field(default=None, primary_key=True)
+    username: str
     access_token: str
     refresh_token: str
     status: bool
@@ -207,7 +208,9 @@ class CommentPublic(SQLModel):
 
 class Visit(SQLModel, table=True):
     id: Union[int, None] = Field(default=None, primary_key=True)
-    path: str
+    path: str | None
+    url: str
+    referrer: str | None
     article_type: str | None
     created_date: datetime.datetime | None = Field(
         default_factory=lambda: datetime.datetime.now(datetime.UTC)

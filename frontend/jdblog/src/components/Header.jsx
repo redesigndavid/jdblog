@@ -40,14 +40,17 @@ function Header() {
             <div className="w-12 h-12 rounded-full bg-blue-500 justify-items-center">
               <RxRocket size={24} className="m-auto h-12 w-12 p-3 text-white" />
             </div>
-            <div className="my-auto text-xl font-special">redesigndavid.com</div>
+            <div className="my-auto text-xl font-special">
+              redesigndavid.com
+            </div>
           </div>
 
-          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
+          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer hidden">
             <div className="flex-auto" />
             <div>Pages</div>
             <div className="flex-auto" />
           </div>
+
           <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
             <div className="flex-auto" />
             <div
@@ -64,41 +67,6 @@ function Header() {
             <div onClick={handleClickDark} className=" py-4 cursor-pointer">
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
             </div>
-
-            {loginInfo && loginInfo["username"] ? (
-              <a
-                onClick={logOut}
-                className="py-4 cursor-pointer text-da"
-              >
-                <MdOutlineLogout size={28} />
-              </a>
-            ) : (
-              <a
-                href={`${import.meta.env.VITE_API_URL}/login/google?redirect=${window.location.href}`}
-                className="py-4"
-              >
-                <MdOutlineLogin size={28} />
-              </a>
-            )}
-
-            <a
-              href="https://linkedin.com/in/redesigndavid"
-              className="dark:text-white text-dark py-4"
-            >
-              <AiFillLinkedin size={28} />
-            </a>
-            <a
-              href="https://www.instagram.com/redesigndavid"
-              className="dark:text-white text-dark py-4"
-            >
-              <AiFillInstagram size={28} />
-            </a>
-            <a
-              href="https://github.com/redesigndavid"
-              className="dark:text-white text-dark py-4"
-            >
-              <AiFillGithub size={28} />
-            </a>
           </div>
         </div>
         <div className="flex-auto" />

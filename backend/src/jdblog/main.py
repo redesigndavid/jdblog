@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import select
+from sqlmodel import func, or_, select
 from starlette.middleware.sessions import SessionMiddleware
 
 from jdblog import auth, blog, database
@@ -73,3 +73,12 @@ def visit_path(session: MakeSession, visit: database.Visit):
     session.add(visit)
     session.commit()
     return visit
+
+
+@app.post("/visit/count")
+def get_visit_count(session: MakeSession, url: str):
+    return session.exec(
+        select(func.count(database.Visit.id)).where(
+            or_(database.Visit.url == url, database.Visit.url == (url + "/"))
+        )
+    ).one()
