@@ -165,7 +165,7 @@ function PostLayout() {
                 className="text-lg font-black font-sans"
                 date={post.created_date}
               />
-              <div className="flex-row xl:flex-col flex gap-1">
+              <div className="flex-row xl:flex-col flex gap-1 flex-wrap">
                 {post.tags?.map((tag) => {
                   return <Tag tagname={tag.name} key={`tag-${tag.name}`} />;
                 })}

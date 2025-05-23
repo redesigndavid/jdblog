@@ -1,8 +1,20 @@
 import { AiFillGithub, AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
+
+import { LoginContext } from "../context/LoginProvider";
+import { MdOutlineLogout } from "react-icons/md";
+import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import { FaRegCopyright } from "react-icons/fa";
 import { AA } from "../Tracker";
 
+import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeProvider";
 function Footer() {
+  const handleClickDark = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  const { logOut, loginInfo, isAdmin } = useContext(LoginContext);
+  const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
   return (
     <>
       <div className="flex flex-row w-full rounded-t-xl pt-12 pb-4">
@@ -20,6 +32,17 @@ function Footer() {
             <AA noVisits href="https://www.instagram.com/redesigndavid">
               <AiFillInstagram size={28} />
             </AA>
+
+            <div className="h-14 border-l-2"/>
+
+            <div onClick={handleClickDark} className=" cursor-pointer">
+              {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
+            </div>
+            {loginInfo?.access_token && (
+              <div onClick={logOut} className="py-4 cursor-pointer">
+                <MdOutlineLogout size={28} />
+              </div>
+            )}
           </div>
           <div className="flex flex-row justify-center items-center gap-2 dark:text-white text-dark pb-4">
             <FaRegCopyright className="m-auto" />{" "}
