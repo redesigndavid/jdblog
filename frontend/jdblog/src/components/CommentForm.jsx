@@ -4,14 +4,17 @@ import { LoginContext } from "../context/LoginProvider";
 import ChooseLogin from "./ChooseLogin"
 
 import axios from "axios";
-function CommentForm({ postId, addComment }) {
+function CommentForm({ articleId, addComment, kind }) {
   const { reset, register, handleSubmit } = useForm();
 
   const { loginInfo } = useContext(LoginContext);
   const onSubmit = (data) => {
+    console.log(
+        `${import.meta.env.VITE_API_URL}/article/${kind}/${articleId}/comment`
+    )
     axios
       .post(
-        `${import.meta.env.VITE_API_URL}/article/{kind}/${postId}/comment`,
+        `${import.meta.env.VITE_API_URL}/article/${kind}/${articleId}/comment`,
         { text: data.comment },
         { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
       )

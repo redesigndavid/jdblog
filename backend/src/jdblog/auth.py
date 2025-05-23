@@ -206,7 +206,7 @@ async def register_user(
     create_user.auth_identity = auth_identity
     create_user.profile = user_profile
 
-    session.add(database.User.model_validate(create_user))
+    session.add(create_user)
 
     try:
         session.commit()

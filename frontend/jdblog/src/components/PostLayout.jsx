@@ -58,7 +58,7 @@ function PostLayout() {
                 <Comment key={`comment-${comment.id}`} comment={comment} />
               );
             })}
-            <CommentForm postId={post["id"]} addComment={addComment} />
+            <CommentForm kind={"post"} articleId={post["id"]} addComment={addComment} />
           </div>
           <div className="flex-auto" />
         </div>
