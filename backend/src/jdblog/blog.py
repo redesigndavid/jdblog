@@ -1,3 +1,4 @@
+import pdb
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -39,6 +40,31 @@ async def get_article(article_id: int, kind: GetKind, session: database.MakeSess
         ).where(database.Article.id == article_id, database.Article.kind == kind)
     ).first()
     return article
+
+
+@router.post("/article/{kind}/{article_id}", response_model=database.ArticlePublic)
+async def update_article(
+    article_id: int,
+    kind: GetKind,
+    session: database.MakeSession,
+    article: database.Article,
+):
+    print(vars())
+    print(article_id)
+    print(article)
+    dbarticle = session.exec(
+        select(
+            database.Article,
+        ).where(database.Article.id == article_id, database.Article.kind == kind)
+    ).first()
+    dbarticle.text = article.text
+    dbarticle.title = article.title
+    session.add(dbarticle)
+    session.commit()
+
+    print("---")
+    print(dbarticle)
+    return dbarticle
 
 
 @router.post("/article/{kind}/new", response_model=database.Article)
