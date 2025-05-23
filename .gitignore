@@ -4,3 +4,4 @@ venv/
 postgres-data/
 backend/src/jdblog.egg-info/
 backend/src/jdblog/__pycache__/
+_gen_data.py

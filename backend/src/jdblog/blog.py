@@ -1,4 +1,3 @@
-import pdb
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -49,9 +48,6 @@ async def update_article(
     session: database.MakeSession,
     article: database.Article,
 ):
-    print(vars())
-    print(article_id)
-    print(article)
     dbarticle = session.exec(
         select(
             database.Article,
@@ -62,8 +58,6 @@ async def update_article(
     session.add(dbarticle)
     session.commit()
 
-    print("---")
-    print(dbarticle)
     return dbarticle
 
 

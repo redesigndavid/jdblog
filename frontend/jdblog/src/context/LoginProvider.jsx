@@ -22,9 +22,6 @@ function LoginProvider({ children }) {
     // save to state and localstorage
     setLoginInfoState(loginfo);
     localStorage.setItem("loginInfo", JSON.stringify(loginfo));
-    console.log(
-      `set is login ${loginfo.user_type == "admin"} - ${loginfo.user_type}`,
-    );
     setIsLogin(loginfo.user_type == "admin");
   };
 
