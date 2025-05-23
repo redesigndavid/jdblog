@@ -9,16 +9,19 @@ function LoginProvider({ children }) {
   let [loginInfo, setLoginInfoState] = useState(() => {
     return JSON.parse(localStorage.getItem("loginInfo"))
   });
+  let [isAdmin, setIsLogin] = useState(false);
 
   const logOut = () => {
     // clear login info
     setLoginInfo({});
+    setIsLogin(false)
   };
 
   const setLoginInfo = (loginfo) => {
     // save to state and localstorage
     setLoginInfoState(loginfo);
     localStorage.setItem("loginInfo", JSON.stringify(loginfo))
+    setIsLogin(loginfo.user_type == "admin");
   };
 
   useEffect(() => {
@@ -37,7 +40,7 @@ function LoginProvider({ children }) {
   }, []);
 
   return (
-    <LoginContext.Provider value={{ logOut, loginInfo, setLoginInfo }}>
+    <LoginContext.Provider value={{ logOut, loginInfo, setLoginInfo, isAdmin }}>
       {children}
     </LoginContext.Provider>
   );
