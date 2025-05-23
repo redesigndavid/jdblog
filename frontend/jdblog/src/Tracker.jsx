@@ -16,9 +16,7 @@ export function track(path, referrer, url) {
     article_type: article_type,
     article_id: article_id,
   };
-  axios.post(`${import.meta.env.VITE_API_URL}/visit`, payload).then((res) => {
-    console.log(res.data);
-  }, []);
+  axios.post(`${import.meta.env.VITE_API_URL}/visit`, payload)
 }
 
 export function AA(props) {
@@ -46,9 +44,9 @@ export function AA(props) {
       <span className="cursor-pointer">
         <a onClick={aJump} {...new_props} />
         {!noVisits && (
-          <div className="rounded-xs inline-block ml-1 pb-1 align-text-top text-xs bg-amber-200 text-black px-1 ">
+          <span className="rounded-xs inline-block ml-1 pb-1 align-text-top text-xs bg-amber-200 text-black px-1 ">
             {visitCount}
-          </div>
+          </span>
         )}
       </span>
     </>
