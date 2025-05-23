@@ -111,10 +111,10 @@ function EditPost({ setShowEdit, setPost }) {
 }
 
 function PostEditTab({ setPost, children }) {
-  const { loginInfo } = useContext(LoginContext);
+  const { isAdmin } = useContext(LoginContext);
   const [showEdit, setShowEdit] = useState(false);
 
-  if (loginInfo.access_token) {
+  if (isAdmin) {
     return (
       <>
         <div
