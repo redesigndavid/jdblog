@@ -20,10 +20,16 @@ class RegisterUserPassword(UserPassword):
     lastName: str
 
 
+class UserType(str, enum.Enum):
+    member = "member"
+    admin = "admin"
+
+
 class UserPub(SQLModel):  # type: ignore
     id: Union[int, None] = Field(default=None, primary_key=True)
     username: str
     profile: Union["Profile", None]
+    user_type: UserType
 
 
 class User(SQLModel, table=True):  # type: ignore
@@ -39,12 +45,16 @@ class User(SQLModel, table=True):  # type: ignore
 
     articles: List["Article"] = Relationship(back_populates="owner")
     comments: List["Comment"] = Relationship(back_populates="owner")
+    user_type: UserType = Field(
+        default=UserType.member, sa_column=Column(Enum(UserType))
+    )
 
 
 class UserPublic(SQLModel):
     id: int | None
     username: str
     profile: Union["Profile", None]
+    user_type: UserType
 
 
 class AuthProvider(str, enum.Enum):

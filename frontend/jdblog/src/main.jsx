@@ -12,6 +12,7 @@ import ThemeProvider from "./context/ThemeProvider";
 import LoginProvider from "./context/LoginProvider";
 import NavigationProvider from "./context/NavigationProvider";
 import Tracker from "./Tracker";
+import AdminLogin from "./AdminLogin";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")).render(
                 <Route path="/" element={<Layout />}>
                   <Route index element={<App />} />
                   <Route path="test" element={<Test />} />
+                  <Route path="admin/login" element={<AdminLogin />} />
                   <Route path="tag/:tagName" element={<TagPostsLayout />} />
                   <Route path="blog/:postId" element={<PostLayout />} />
                   <Route path="blog" element={<PostsLayout />} />

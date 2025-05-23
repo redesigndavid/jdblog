@@ -31,6 +31,7 @@ function Comment({ comment }) {
                   onError={(ev) => {
                     ev.target.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==";
                   }}
+                  alt={comment.owner.profile.photo}
                 />
                 <div
                   style={{ backgroundColor: `hsl(${color}, 50%, 50%)` }}

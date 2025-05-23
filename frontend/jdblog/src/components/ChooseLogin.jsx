@@ -1,6 +1,6 @@
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
-function LoginButton({ icon, name }) {
+export function LoginButton({ icon, name }) {
   return (
     <a
       href={`${import.meta.env.VITE_API_URL}/login/${name}?redirect=${window.location.href}`}

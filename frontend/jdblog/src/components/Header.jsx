@@ -68,10 +68,16 @@ function Header() {
           <HeaderLink link="/" name="Home" />
           <HeaderLink link="/blog" name="Blog" />
 
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-row gap-8">
             <div onClick={handleClickDark} className=" py-4 cursor-pointer">
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
             </div>
+
+            {loginInfo.access_token && (
+              <div onClick={logOut} className=" py-4 cursor-pointer">
+                <MdOutlineLogout size={28} />
+              </div>
+            )}
           </div>
         </div>
         <div className="flex-auto" />
