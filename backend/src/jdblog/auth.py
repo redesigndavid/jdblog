@@ -175,15 +175,12 @@ async def get_current_user(
     credentials=AuthenticatedBearer,
 ) -> database.User:
     """Get all the users."""
-    try:
-        _, user = session.exec(
-            select(database.Token, database.User).where(
-                database.Token.access_token == credentials.credentials,
-                database.User.username == database.Token.username,
-            )
-        ).first()
-    except:
-        raise KeyError
+    _, user = session.exec(
+        select(database.Token, database.User).where(
+            database.Token.access_token == credentials.credentials,
+            database.User.username == database.Token.username,
+        )
+    ).first()
     return user
 
 
