@@ -9,9 +9,6 @@ function CommentForm({ articleId, addComment, kind }) {
 
   const { loginInfo } = useContext(LoginContext);
   const onSubmit = (data) => {
-    console.log(
-        `${import.meta.env.VITE_API_URL}/article/${kind}/${articleId}/comment`
-    )
     axios
       .post(
         `${import.meta.env.VITE_API_URL}/article/${kind}/${articleId}/comment`,

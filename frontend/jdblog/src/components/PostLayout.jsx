@@ -14,9 +14,8 @@ import { useParams } from "react-router";
 import axios from "axios";
 import "../hljs.css";
 
-function EditPost() {
+function EditPost({ setShowEdit, setPost }) {
   const { watch, getValues, register, handleSubmit, setValue } = useForm();
-
 
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
@@ -24,7 +23,10 @@ function EditPost() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/article/post/${postId}`, {text, title})
+      .get(`${import.meta.env.VITE_API_URL}/article/post/${postId}`, {
+        text,
+        title,
+      })
       .then((res) => {
         setValue("text", res.data.text);
         setValue("title", res.data.title);
@@ -38,7 +40,7 @@ function EditPost() {
 
   useEffect(() => {
     const { unsubscribe } = watch((value) => {
-    setTimeout(update, 100);
+      setTimeout(update, 100);
     });
     return () => unsubscribe();
   }, [watch]);
@@ -46,7 +48,6 @@ function EditPost() {
   const { loginInfo } = useContext(LoginContext);
 
   const onSubmit = (data) => {
-    console.log(data);
     axios
       .post(
         `${import.meta.env.VITE_API_URL}/article/post/${postId}`,
@@ -56,13 +57,16 @@ function EditPost() {
         },
         { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
       )
-
+      .then((res) => {
+        setPost(res.data);
+        setShowEdit(false);
+      });
   };
 
   return (
     <>
       <div className="w-dvw flex flex-row ">
-        <div className="p-4 bg-stone-900 w-full">
+        <div className="p-4 text-stone-900 dark:text-stone-50 bg-stone-50 dark:bg-stone-900 w-full">
           <div className="pt-20 w-3xl  text-stone-900 dark:text-stone-50 ">
             <Title>{title}</Title>
             <div className="pt-5  flex flex-col">
@@ -94,7 +98,11 @@ function EditPost() {
                 "w-full p-2 leading-tight focus:outline-none min-h-[30rem]"
               }
             />
-            <input type="submit" value="Save" className="p-4 bg-stone-950 text-white"/>
+            <input
+              type="submit"
+              value="Save"
+              className="p-4 bg-stone-950 text-white"
+            />
           </form>
         </div>
       </div>
@@ -102,25 +110,32 @@ function EditPost() {
   );
 }
 
-function PostEditTab({ children }) {
+function PostEditTab({ setPost, children }) {
+  const { loginInfo } = useContext(LoginContext);
   const [showEdit, setShowEdit] = useState(false);
-  return (
-    <>
-      <div
-        className="w-full h-4 bg-green-400 fixed top-0 z-50"
-        onClick={() => {
-          setShowEdit(!showEdit);
-        }}
-      />
-      {(showEdit && (
-        <div className="absolute w-dvw top-0">
-          <EditPost />
-        </div>
-      )) ||
-        children}
-    </>
-  );
+
+  if (loginInfo.access_token) {
+    return (
+      <>
+        <div
+          className="w-full h-4 bg-green-400 fixed top-0 z-50"
+          onClick={() => {
+            setShowEdit(!showEdit);
+          }}
+        />
+        {(showEdit && (
+          <div className="absolute w-dvw top-0 ">
+            <EditPost setShowEdit={setShowEdit} setPost={setPost} />
+          </div>
+        )) ||
+          children}
+      </>
+    );
+  } else {
+    return <>{children}</>;
+  }
 }
+
 function PostLayout() {
   const { postId } = useParams();
   const [post, setPost] = useState({ text: "" });
@@ -141,7 +156,7 @@ function PostLayout() {
 
   return (
     <>
-      <PostEditTab>
+      <PostEditTab setPost={setPost}>
         <div className="pt-20 xl:w-7xl w-5xl  text-stone-900 dark:text-stone-50">
           <Title>{post["title"]}</Title>
           <div className="pt-5 xl:py-15 flex flex-col xl:flex-row">

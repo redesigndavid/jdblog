@@ -43,9 +43,6 @@ function Header() {
   };
 
   const { nav } = useContext(NavigationContext);
-
-
-  console.log(loginInfo);
   return (
     <>
       <div
