@@ -80,7 +80,7 @@ function Header() {
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
             </div>
 
-            {loginInfo.access_token && (
+            {loginInfo?.access_token && (
               <div onClick={logOut} className=" py-4 cursor-pointer">
                 <MdOutlineLogout size={28} />
               </div>
