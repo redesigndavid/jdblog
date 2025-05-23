@@ -1,18 +1,38 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context/ThemeProvider";
 import { MdOutlineLogin, MdOutlineLogout } from "react-icons/md";
 import { NavigationContext } from "../context/NavigationProvider";
 
 import profile from "/dmartephoto.png";
-import {
-  AiFillSun,
-  AiFillMoon,
-  AiFillGithub,
-  AiFillInstagram,
-  AiFillLinkedin,
-} from "react-icons/ai";
+import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import { RxRocket } from "react-icons/rx";
 import { LoginContext } from "../context/LoginProvider";
+
+function HeaderLink({ link, name }) {
+  const { nav } = useContext(NavigationContext);
+  const [currentLink, setCurrentLink] = useState(false);
+  useEffect(() => {
+    if (link != "/") {
+      setCurrentLink(window.location.pathname.startsWith(link));
+    } else {
+      setCurrentLink(window.location.pathname == "/");
+    }
+  }, [window.location.pathname]);
+  return (
+    <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer ">
+      <div className="flex-auto" />
+      <div
+        className={(currentLink && "border-b-4 pb-2") || ""}
+        onClick={() => {
+          nav(link);
+        }}
+      >
+        {name}
+      </div>
+      <div className="flex-auto" />
+    </div>
+  );
+}
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
@@ -45,23 +65,8 @@ function Header() {
             </div>
           </div>
 
-          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer hidden">
-            <div className="flex-auto" />
-            <div>Pages</div>
-            <div className="flex-auto" />
-          </div>
-
-          <div className="h-12  justify-items-center flex flex-col py-5 pr-12 cursor-pointer">
-            <div className="flex-auto" />
-            <div
-              onClick={() => {
-                nav("/blog");
-              }}
-            >
-              Blog
-            </div>
-            <div className="flex-auto" />
-          </div>
+          <HeaderLink link="/" name="Home" />
+          <HeaderLink link="/blog" name="Blog" />
 
           <div className="flex flex-row gap-4">
             <div onClick={handleClickDark} className=" py-4 cursor-pointer">
