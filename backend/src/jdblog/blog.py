@@ -1,3 +1,4 @@
+import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -20,6 +21,7 @@ GetKind = Annotated[database.ArticleKind, Depends(get_kind)]
 async def get_articles(
     session: database.MakeSession,
     kind: GetKind,
+    status: database.ArticleStatus | None = None,
 ):
     return [
         article
@@ -41,6 +43,23 @@ async def get_article(article_id: int, kind: GetKind, session: database.MakeSess
     return article
 
 
+@router.post("/article/{kind}/new", response_model=database.Article)
+async def create_article(
+    article: database.Article,
+    kind: GetKind,
+    session: database.MakeSession,
+    current_user: auth.CurrentUser,
+):
+    article.kind = kind
+    if article.created_date is None:
+        article.created_date = datetime.datetime.utcnow()
+    article.owner = current_user
+    session.add(article)
+    session.commit()
+    session.refresh(article)
+    return article
+
+
 @router.post("/article/{kind}/{article_id}", response_model=database.ArticlePublic)
 async def update_article(
     article_id: int,
@@ -55,26 +74,43 @@ async def update_article(
     ).first()
     dbarticle.text = article.text
     dbarticle.title = article.title
+    dbarticle.status = article.status
     session.add(dbarticle)
     session.commit()
 
     return dbarticle
 
 
-@router.post("/article/{kind}/new", response_model=database.Article)
-async def create_article(
-    article: database.Article,
+def ensure_tag(session: database.Session, tag: database.Tag) -> database.Tag:
+    dbtag = session.exec(
+        select(database.Tag).where(database.Tag.name == tag.name)
+    ).first()
+    if dbtag is not None:
+        return dbtag
+    tag = database.Tag.model_validate(tag)
+    session.add(tag)
+    return tag
+
+
+@router.post("/article/{kind}/{article_id}/tags")
+async def set_article_tags(
+    article_id: int,
+    tags: list[str],
     kind: GetKind,
     session: database.MakeSession,
-    current_user: auth.CurrentUser,
+    _current_user: auth.CurrentUser,
 ):
-    article.kind = kind
-    article = database.Article.model_validate(article)
-    article.owner = current_user
-    session.add(article)
+    article = session.exec(
+        select(database.Article).where(
+            database.Article.id == article_id, database.Article.kind == kind
+        )
+    ).first()
+    if article is None:
+        return
+    tags = [ensure_tag(session, database.Tag(name=tag)) for tag in tags]
+
+    article.tags = tags
     session.commit()
-    session.refresh(article)
-    return article
 
 
 @router.post("/article/{kind}/{article_id}/tag")
@@ -86,7 +122,6 @@ async def tag_article(
     _current_user: auth.CurrentUser,
 ):
 
-    need_commit = False
     article = session.exec(
         select(database.Article).where(
             database.Article.id == article_id, database.Article.kind == kind
@@ -95,22 +130,12 @@ async def tag_article(
     if article is None:
         return
 
-    dbtag = session.exec(
-        select(database.Tag).where(database.Tag.name == tag.name)
-    ).first()
-    if dbtag is None:
-        tag = database.Tag.model_validate(tag)
-        session.add(tag)
-        need_commit = True
-    else:
-        tag = dbtag
+    tag = ensure_tag(session, tag)
 
     if tag not in article.tags:
         article.tags.append(tag)
-        need_commit = True
 
-    if need_commit:
-        session.commit()
+    session.commit()
 
 
 @router.post("/article/{kind}/{article_id}/untag")

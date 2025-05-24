@@ -14,6 +14,11 @@ import { useParams } from "react-router";
 import axios from "axios";
 import "../hljs.css";
 
+function correctTime(datetime) {
+  return new Date(
+    new Date(datetime).toString().slice(0, 25) + " UTC",
+  ).toString();
+}
 function EditPost({ setShowEdit, setPost }) {
   const { watch, getValues, register, handleSubmit, setValue } = useForm();
 
@@ -156,14 +161,13 @@ function PostLayout() {
 
   return (
     <>
-      <PostEditTab setPost={setPost}>
         <div className="pt-20 xl:w-7xl w-5xl  text-stone-900 dark:text-stone-50">
           <Title>{post["title"]}</Title>
           <div className="pt-5 xl:py-15 flex flex-col xl:flex-row">
             <div className="py-4 xl:py-0 xl:w-2xs w-5xl hh max-w-dvw flex flex-col gap-4 xl:px-0 px-4">
               <TimeAgo
                 className="text-lg font-black font-sans"
-                date={post.created_date}
+                date={correctTime(post.created_date)}
               />
               <div className="flex-row xl:flex-col flex gap-1 flex-wrap">
                 {post.tags?.map((tag) => {
@@ -196,7 +200,6 @@ function PostLayout() {
             <div className="flex-auto" />
           </div>
         </div>
-      </PostEditTab>
     </>
   );
 }

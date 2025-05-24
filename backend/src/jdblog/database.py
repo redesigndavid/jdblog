@@ -68,6 +68,11 @@ class ArticleKind(str, enum.Enum):
     page = "page"
 
 
+class ArticleStatus(str, enum.Enum):
+    draft = "draft"
+    published = "published"
+
+
 class AuthIdentity(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(
@@ -129,6 +134,9 @@ class Article(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "joined"},
     )
     kind: ArticleKind = Field(sa_column=Column(Enum(ArticleKind)))
+    status: ArticleStatus = Field(
+        default=ArticleStatus.draft, sa_column=Column(Enum(ArticleStatus))
+    )
     title: str | None
     excerpt: str | None
     image: str | None
@@ -139,7 +147,7 @@ class Article(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "joined"},
     )
     comments: list["Comment"] = Relationship(back_populates="article")
-    created_date: datetime.datetime = Field(
+    created_date: datetime.datetime | None = Field(
         default_factory=lambda: datetime.datetime.now(datetime.UTC)
     )
     visits: list["Visit"] = Relationship(back_populates="article")
@@ -156,6 +164,7 @@ class ArticlePublic(SQLModel):
     created_date: datetime.datetime
     comments: list["CommentPublic"] = []
     visits: list["VisitPublic"] = []
+    status: ArticleStatus
 
 
 class ArticleShortPublic(SQLModel):
