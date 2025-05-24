@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App.jsx";
 import Layout from "./components/Layout";
 import Test from "./Test";
+import EditPostLayout from "./components/EditPostLayout"
 import PostLayout from "./components/PostLayout.jsx";
 import PostsLayout from "./components/PostsLayout.jsx";
 import TagPostsLayout from "./components/TagPostsLayout.jsx";
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")).render(
                   <Route path="admin/login" element={<AdminLogin />} />
                   <Route path="tag/:tagName" element={<TagPostsLayout />} />
                   <Route path="blog/:postId" element={<PostLayout />} />
+                  <Route path="blog/:postId/edit" element={<EditPostLayout />} />
                   <Route path="blog" element={<PostsLayout />} />
                 </Route>
               </Routes>

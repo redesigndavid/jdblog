@@ -10,7 +10,7 @@ import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import { RxRocket } from "react-icons/rx";
 import { LoginContext } from "../context/LoginProvider";
 
-function HeaderLink({ link, name }) {
+function HeaderLink({ link, name, adminColor = false }) {
   const { nav } = useContext(NavigationContext);
   const [currentLink, setCurrentLink] = useState(false);
   useEffect(() => {
@@ -21,7 +21,12 @@ function HeaderLink({ link, name }) {
     }
   }, [window.location.pathname]);
   return (
-    <div className="h-12  justify-items-center flex flex-col py-5 cursor-pointer ">
+    <div
+      className={
+        "h-12 justify-items-center flex flex-col py-5 cursor-pointer " +
+        (adminColor && " text-red-500 ")
+      }
+    >
       <div className="flex-auto" />
       <div
         className={(currentLink && "border-b-4 pb-2") || ""}
@@ -45,6 +50,8 @@ function Header() {
   };
 
   const { nav } = useContext(NavigationContext);
+
+  const blog_post_regex = /^\/blog\/\d+$/gm;
   return (
     <>
       <div
@@ -72,6 +79,16 @@ function Header() {
           <div className="flex flex-row gap-8 justify-around">
             <HeaderLink link="/" name="Home" />
             <HeaderLink link="/blog" name="Blog" />
+            {blog_post_regex.test(window.location.pathname) && isAdmin && (
+              <HeaderLink
+                link={window.location.pathname + "/edit"}
+                name="Edit"
+                adminColor
+              />
+            )}
+            {isAdmin && (
+              <HeaderLink link="/blog/new/edit" name="New Post" adminColor />
+            )}
           </div>
         </div>
         <div className="flex-auto" />

@@ -1,7 +1,23 @@
 import { useContext } from "react";
 import { NavigationContext } from "../context/NavigationProvider";
-function Tag({ tagname }) {
 
+export function TagDiv(props) {
+  const {
+    tagname,
+    className = "bg-amber-200 line-clamp-1 rounded-full p-3 pr-4 flex flex-row ",
+    ...rest
+  } = props;
+  return (
+    <>
+      <div {...rest} className={className}>
+        <span className="text-emerald-400 p-0">#</span>
+        <div className="">{tagname}</div>
+      </div>
+    </>
+  );
+}
+
+function Tag({ tagname }) {
   const { nav } = useContext(NavigationContext);
 
   return (
@@ -12,10 +28,7 @@ function Tag({ tagname }) {
         }}
         className="flex flex-row text-black cursor-pointer"
       >
-        <div className="bg-amber-200 line-clamp-1 rounded-full p-3 pr-4 flex flex-row ">
-          <span className="text-emerald-400 p-0">#</span>
-          <div className="">{tagname}</div>
-        </div>
+        <TagDiv tagname={tagname} />
         <div className="flex-auto" />
       </div>
     </>
