@@ -3,6 +3,7 @@ import axios from "axios";
 import { NavigationContext } from "./context/NavigationProvider";
 
 export function track(path, referrer, url) {
+
   var article_type = null;
   var article_id = null;
   if (path && path.startsWith("/blog/")) {
@@ -16,6 +17,7 @@ export function track(path, referrer, url) {
     article_type: article_type,
     article_id: article_id,
   };
+
   axios.post(`${import.meta.env.VITE_API_URL}/visit`, payload)
 }
 

@@ -1,34 +1,38 @@
 import { useForm } from "react-hook-form";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { LoginContext } from "../context/LoginProvider";
-import ChooseLogin from "./ChooseLogin"
+import { ApiContext } from "../context/ApiProvider";
+import ChooseLogin from "./ChooseLogin";
 
-import axios from "axios";
 function CommentForm({ articleId, addComment, kind }) {
   const { reset, register, handleSubmit } = useForm();
 
-  const { loginInfo } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
+  const { requester } = useContext(ApiContext);
+
+  useEffect(() => { }, []);
+
   const onSubmit = (data) => {
-    axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/article/${kind}/${articleId}/comment`,
-        { text: data.comment },
-        { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
-      )
-      .then((res) => {
-        setFocus(false);
-        addComment(res.data);
-        setTimeout(reset, 10);
-      });
+    requester(
+      "post",
+      `/article/${kind}/${articleId}/comment`,
+      { text: data.comment },
+      true,
+    ).then((res) => {
+      setFocus(false);
+      addComment(res.data);
+      setTimeout(reset, 10);
+    });
   };
+
   const [isFocus, setFocus] = useState(false);
   const [chooseLogin, setChooseLogin] = useState(false);
 
   return (
     <>
-      {chooseLogin && <ChooseLogin onClick={() => setChooseLogin(false)}/>}
+      {chooseLogin && <ChooseLogin onClick={() => setChooseLogin(false)} />}
       <div className="p-4 bg-stone-200 dark:bg-stone-800 rounded-xl mt-8 text-gray-700 dark:text-gray-200   ">
-        {(loginInfo?.access_token && (
+        {(isLoggedIn && (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className={"transition-all  " + (isFocus ? "h-42 " : "h-18")}

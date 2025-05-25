@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import Highlight from "react-highlight";
 import rehypeRaw from "rehype-raw";
 import { AA } from "../Tracker";
+import "../hljs.css";
 
 const FlattenPre = ({ children }) => {
   const pretype = (<Highlight />).type;

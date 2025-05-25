@@ -1,23 +1,28 @@
 import profile from "/dmartephoto.png";
-import axios from "axios";
 import Tag from "./components/Tag";
 import PostSections from "./components/PostSections";
-import { useState, useEffect } from "react";
+import { ApiContext } from "./context/ApiProvider";
+import { useState, useEffect, useContext } from "react";
 import "./App.css";
 
 function App() {
-  const [posts, setPosts] = useState([])
-  const [popPosts, setPopPosts] = useState([])
+  const [posts, setPosts] = useState([]);
+  const [popPosts, setPopPosts] = useState([]);
   const [tags, setTags] = useState([]);
+  const { requester } = useContext(ApiContext);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/article/post`).then((res) => {
-      res.data.sort((b, a) => (new Date(a.created_date)).getTime() - (new Date(b.created_date)).getTime())
+    requester("get", "/article/post").then((res) => {
+      res.data.sort(
+        (b, a) =>
+          new Date(a.created_date).getTime() -
+          new Date(b.created_date).getTime(),
+      );
       setPosts([...res.data]);
-      res.data.sort((b, a) => a.visits.length - b.visits.length)
+      res.data.sort((b, a) => a.visits.length - b.visits.length);
       setPopPosts([...res.data]);
     }, []);
-    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
+    requester("get", "/tag").then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);
@@ -31,9 +36,10 @@ function App() {
               Hi, I'm David.
             </div>
             <div className="p-4 xl:p-0 max-w-dvw text-2xl leading-8 w-full xl:w-2xl">
-              I'm an x-ILM Senior Software Engineer. The last 13+ years, I've been working on
-              software that artists use while producing your favorite hollywood blockbusters.
-              This is my blog, my posts and my thoughts.
+              I'm an x-ILM Senior Software Engineer. The last 13+ years, I've
+              been working on software that artists use while producing your
+              favorite hollywood blockbusters. This is my blog, my posts and my
+              thoughts.
             </div>
           </div>
           <img
@@ -44,7 +50,9 @@ function App() {
         <div className="flex-col flex py-8 xl:flex-row">
           <div className="py-4 xl:py-0 xl:w-2xs w-5xl hh max-w-dvw flex flex-col gap-4 mx-auto xl:px-0 px-4">
             <div className="flex-row xl:flex-col flex gap-1 flex-wrap">
-              <div className="text-lg xl:pb-4 xl:pr-0 pr-2 pb-0 my-auto font-black items-center justify-center ">Top tags</div>
+              <div className="text-lg xl:pb-4 xl:pr-0 pr-2 pb-0 my-auto font-black items-center justify-center ">
+                Top tags
+              </div>
               {tags &&
                 tags.slice(0, 5).map((tag) => {
                   return <Tag tagname={tag.name} key={`tag-${tag.name}`} />;

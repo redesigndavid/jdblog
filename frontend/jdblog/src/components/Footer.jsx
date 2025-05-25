@@ -13,7 +13,7 @@ function Footer() {
     setIsDarkMode(!isDarkMode);
   };
 
-  const { logOut, loginInfo, isAdmin } = useContext(LoginContext);
+  const { logOut, isLoggedIn, isAdmin } = useContext(LoginContext);
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
   return (
     <>
@@ -38,7 +38,7 @@ function Footer() {
             <div onClick={handleClickDark} className=" cursor-pointer">
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
             </div>
-            {loginInfo?.access_token && (
+            {isLoggedIn && (
               <div onClick={logOut} className="py-4 cursor-pointer">
                 <MdOutlineLogout size={28} />
               </div>

@@ -4,15 +4,15 @@ import { useForm } from "react-hook-form";
 import { useContext, useState, useEffect } from "react";
 import { LoginContext } from "../context/LoginProvider";
 import { NavigationContext } from "../context/NavigationProvider";
-import Title from "./Title";
 import { TagDiv } from "./Tag";
+import Title from "./Title";
 import MD from "./MD";
 import { useParams } from "react-router";
 
-import axios from "axios";
-import "../hljs.css";
+import { ApiContext } from "../context/ApiProvider";
 
 function EditPostLayout() {
+  const { requester } = useContext(ApiContext);
   const { watch, getValues, register, handleSubmit, setValue } = useForm();
 
   const [published, setPublished] = useState(false);
@@ -23,25 +23,22 @@ function EditPostLayout() {
   const { postId } = useParams();
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/article/post/${postId}`, {
-        text,
-        title,
-      })
-      .then((res) => {
-        setValue("text", res.data.text);
-        setValue("title", res.data.title);
-        setPublished(res.data.status == "published");
-        console.log(res.data.status);
-        setPostTags(
-          res.data.tags.map((tag) => {
-            return tag.name;
-          }),
-        );
-        console.log(res.data.tags);
-      });
+    requester("get", `/article/post/${postId}`, {
+      text,
+      title,
+    }).then((res) => {
+      setValue("text", res.data.text);
+      setValue("title", res.data.title);
+      setPublished(res.data.status == "published");
+      setPostTags(
+        res.data.tags.map((tag) => {
+          return tag.name;
+        }),
+      );
+      console.log(res.data.tags);
+    });
 
-    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
+    requester("get", "/tag").then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);
@@ -70,40 +67,34 @@ function EditPostLayout() {
   };
 
   const onSubmit = (data) => {
-    axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/article/post/${postId}`,
-        {
-          excerpt: "",
-          text: text,
-          title: title,
-          status: published && "published" || "draft",
-          created_date: null,
-        },
-        { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
-      )
-      .then(() => {
-        axios
-          .post(
-            `${import.meta.env.VITE_API_URL}/article/post/${postId}/tags`,
-            postTags,
-            { headers: { Authorization: `Bearer ${loginInfo.access_token}` } },
-          )
-          .then(() => {
-            if (postId == "new") {
-              nav("/");
-            } else {
-              nav(`/blog/${postId}`);
-            }
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            }
-          });
-      });
+    requester(
+      "post",
+      `/article/post/${postId}`,
+      {
+        excerpt: "",
+        text: text,
+        title: title,
+        status: (published && "published") || "draft",
+        created_date: null,
+      },
+      true,
+    ).then(() => {
+      requester("post", `/article/post/${postId}/tags`, postTags, true)
+        .then(() => {
+          if (postId == "new") {
+            nav("/");
+          } else {
+            nav(`/blog/${postId}`);
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          }
+        });
+    });
   };
 
   return (

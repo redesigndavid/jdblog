@@ -1,9 +1,13 @@
 import React from "react";
-import axios from "axios";
+
+import { ApiContext } from "../context/ApiProvider";
 import GenericPostsLayout from "./GenericPostsLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 function PostLayout() {
+
+  const { requester } = useContext(ApiContext);
+
   const [posts, setPosts] = useState(() => {
     return [];
   });
@@ -13,10 +17,10 @@ function PostLayout() {
   });
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/article/post`).then((res) => {
-      setPosts(res.data);
+    requester("get", "/article/post").then((post) => {
+      setPosts(post.data);
     }, []);
-    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
+    requester("get", "/tag").then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);

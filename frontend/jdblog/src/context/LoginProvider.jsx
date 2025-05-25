@@ -3,27 +3,38 @@ export const LoginContext = createContext(null);
 import axios from "axios";
 
 import { useSearchParams } from "react-router-dom";
+
 function LoginProvider({ children }) {
   let [searchParams, setSearchParams] = useSearchParams();
   let [loginInfo, setLoginInfoState] = useState(() => {
     return JSON.parse(localStorage.getItem("loginInfo"));
   });
-  let [isAdmin, setIsLogin] = useState(() => {
+  let [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return loginInfo?.access_token === undefined;
+  });
+
+  let [isAdmin, setIsAdminLogin] = useState(() => {
     return JSON.parse(localStorage.getItem("loginInfo"))?.user_type == "admin";
   });
 
   const logOut = () => {
     // clear login info
     setLoginInfo({});
-    setIsLogin(false);
+    setIsAdminLogin(false);
+    setIsLoggedIn(false)
   };
 
   const setLoginInfo = (loginfo) => {
     // save to state and localstorage
     setLoginInfoState(loginfo);
     localStorage.setItem("loginInfo", JSON.stringify(loginfo));
-    setIsLogin(loginfo.user_type == "admin");
+    setIsAdminLogin(loginfo.user_type == "admin");
   };
+  useEffect(()=>{
+    setIsLoggedIn(loginInfo?.access_token !== undefined)
+  }, [loginInfo]
+  )
+
 
   useEffect(() => {
     if (searchParams.get("access_token")) {
@@ -44,7 +55,7 @@ function LoginProvider({ children }) {
   }, []);
 
   return (
-    <LoginContext.Provider value={{ logOut, loginInfo, setLoginInfo, isAdmin }}>
+    <LoginContext.Provider value={{ logOut, loginInfo, isAdmin, isLoggedIn }}>
       {children}
     </LoginContext.Provider>
   );

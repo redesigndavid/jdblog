@@ -1,10 +1,11 @@
 import React from "react";
-import axios from "axios";
 import GenericPostsLayout from "./GenericPostsLayout";
+import { ApiContext } from "../context/ApiProvider";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 
 function TagPostLayout() {
+  const { requester } = useContext(ApiContext);
   const [posts, setPosts] = useState(() => {
     return [];
   });
@@ -16,10 +17,10 @@ function TagPostLayout() {
   const { tagName } = useParams();
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/tag/${tagName}`).then((res) => {
+    requester("get", `/tag/${tagName}`).then((res) => {
       setPosts(res.data.articles);
     }, []);
-    axios.get(`${import.meta.env.VITE_API_URL}/tag`).then((tags) => {
+    requester("get", `/tag`).then((tags) => {
       setTags(tags.data);
     }, []);
   }, []);

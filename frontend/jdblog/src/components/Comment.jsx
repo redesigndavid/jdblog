@@ -22,7 +22,7 @@ function Comment({ comment }) {
     <>
       <article className="p-4 text-base rounded-lg bg-stone-50 my-2 dark:bg-stone-950">
         <div className="flex items-center">
-          <div className="inline-flex items-center mr-3 text-sm text-stone-900 dark:text-stone-50 font-semibold flex flex-row">
+          <div className="items-center mr-3 text-sm text-stone-900 dark:text-stone-50 font-semibold flex flex-row">
             <div className="relative">
               <div className="w-8 h-8 rounded-full top-0 left-0 mr-4 ">
                 <img

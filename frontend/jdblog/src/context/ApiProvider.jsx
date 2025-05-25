@@ -1,24 +1,17 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
-import { LoginContext } from "../context/LoginProvider";
+import { LoginContext } from "./LoginProvider";
 
+import axios from "axios";
 export const ApiContext = createContext(null);
 
+document.aaa = axios;
 function ApiProvider({ children }) {
   const { loginInfo } = useContext(LoginContext);
 
-  function requester(method, path, payload, useHeaders) {
-    var methodF = null;
-    switch (method) {
-      case "get":
-        methodF = axios.get;
-        break;
-      case "post":
-        methodF = axios.post;
-        break;
-    }
+  const requester = (method, path, payload, useHeaders) => {
 
-    return methodF(
+    return axios[method](
       import.meta.env.VITE_API_URL + path,
       payload,
       useHeaders && {
@@ -31,11 +24,13 @@ function ApiProvider({ children }) {
         console.log(error.response.headers);
       }
     });
-  }
+  };
 
   return (
     <>
-      <ApiContext.Provider value={{requester}}>{children}</ApiContext.Provider>
+      <ApiContext.Provider value={{ requester }}>
+        {children}
+      </ApiContext.Provider>
     </>
   );
 }
