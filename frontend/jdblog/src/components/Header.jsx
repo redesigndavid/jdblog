@@ -61,7 +61,7 @@ function Header() {
         }
       >
         <div className="flex-auto" />
-        <div className="w-full xl:w-7xl px-4 xl:px-0 flex-col flex md:flex-row ">
+        <div className="w-full xl:w-7xl pl-4 pr-8 xl:px-0 flex-row flex ">
           <div
             onClick={() => {
               nav("/");

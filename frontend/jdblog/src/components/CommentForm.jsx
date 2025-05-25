@@ -18,7 +18,6 @@ function CommentForm({ articleId, addComment, kind }) {
       true,
       (res) => {
         if (res != undefined) {
-          console.log(res);
           setFocus(false);
           addComment(res.data);
           setTimeout(reset, 10);

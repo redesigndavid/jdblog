@@ -1,6 +1,7 @@
 import dateFormat from "dateformat";
 import { useContext } from "react";
 import { NavigationContext } from "../context/NavigationProvider";
+import { LoginContext } from "../context/LoginProvider";
 
 function correctTime(datetime) {
   return dateFormat(
@@ -10,6 +11,8 @@ function correctTime(datetime) {
 }
 function PostSection({ title, posts }) {
   const { nav } = useContext(NavigationContext);
+
+  const { logOut, loginInfo, isAdmin } = useContext(LoginContext);
   return (
     <div>
       <div className="xl:px-0 font-extrabold text-4xl line-clamp-1">
@@ -29,7 +32,20 @@ function PostSection({ title, posts }) {
               }}
               className="xl:flex-nowrap flex flex-col-reverse md:flex-row my-2 text-pretty text-xl cursor-pointer"
             >
-              {post.title} {post.status}
+              <div className="flex flex-row">
+                <div>{post.title}</div>
+                {isAdmin && (
+                  <div
+                    className={
+                      ((post.status == "published" && "bg-green-500/20 ") ||
+                        " bg-yellow-500/20 ") +
+                      " text-sm  align-middle my-auto p-1 rounded-sm mx-2 inline-block"
+                    }
+                  >
+                    {post.status}
+                  </div>
+                )}
+              </div>
               <div className="flex-auto" />
               <div className="text-xs md:text-lg ">
                 {correctTime(post.created_date)}

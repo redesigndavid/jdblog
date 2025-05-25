@@ -1,22 +1,26 @@
 import { AiFillGithub, AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
+import { MdOutlineLogin, MdOutlineLogout } from "react-icons/md";
 
+import ChooseLogin from "./ChooseLogin";
 import { LoginContext } from "../context/LoginProvider";
-import { MdOutlineLogout } from "react-icons/md";
 import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import { FaRegCopyright } from "react-icons/fa";
 import { AA } from "../Tracker";
 
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { ThemeContext } from "../context/ThemeProvider";
 function Footer() {
   const handleClickDark = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const { logOut, isLoggedIn, isAdmin } = useContext(LoginContext);
+  const { logOut, isLoggedIn } = useContext(LoginContext);
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
+
+  const [chooseLogin, setChooseLogin] = useState(false);
   return (
     <>
+      {chooseLogin && <ChooseLogin onClick={() => setChooseLogin(false)} />}
       <div className="flex flex-row w-full rounded-t-xl pt-12 pb-4">
         <div className="flex-auto" />
         <div className="flex flex-col">
@@ -33,14 +37,18 @@ function Footer() {
               <AiFillInstagram size={28} />
             </AA>
 
-            <div className="h-14 border-l-2"/>
+            <div className="h-14 border-l-2" />
 
             <div onClick={handleClickDark} className=" cursor-pointer">
               {isDarkMode ? <AiFillMoon size={28} /> : <AiFillSun size={28} />}
             </div>
-            {isLoggedIn && (
+            {(isLoggedIn && (
               <div onClick={logOut} className="py-4 cursor-pointer">
                 <MdOutlineLogout size={28} />
+              </div>
+            )) || (
+              <div onClick={() => setChooseLogin(true)} className="py-4 cursor-pointer">
+                <MdOutlineLogin size={28} />
               </div>
             )}
           </div>

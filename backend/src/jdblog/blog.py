@@ -2,11 +2,33 @@ import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from sqlmodel import func, select
+from sqlmodel import select
 
 from jdblog import auth, database
 
+# from typing import Annotated, Callable
+# from fastapi.routing import APIRoute
+# from fastapi import APIRouter, Depends, Request, Response
+# class NoisyRoute(APIRoute):
+#     def get_route_handler(self) -> Callable:
+#         original_route_handler = super().get_route_handler()
+#
+#         async def custom_route_handler(request: Request) -> Response:
+#             # before = time.time()
+#             response: Response = await original_route_handler(request)
+#             # duration = time.time() - before
+#             # response.headers["X-Response-Time"] = str(duration)
+#             import pprint
+#
+#             if request.scope["path"] == "/article/post":
+#                 print(pprint.pformat(vars(request)))
+#             return response
+#
+#         return custom_route_handler
+
+
 # Authentication router
+# router = APIRouter(route_class=NoisyRoute)
 router = APIRouter()
 
 
@@ -17,20 +39,18 @@ def get_kind(kind: str):
 GetKind = Annotated[database.ArticleKind, Depends(get_kind)]
 
 
-@router.get("/article/{kind}", response_model=list[database.ArticlePublic])
+@router.post("/article/{kind}", response_model=list[database.ArticlePublic])
 async def get_articles(
     session: database.MakeSession,
     kind: GetKind,
-    status: database.ArticleStatus | None = None,
+    status: database.ArticleStatusQuery | None = None,
 ):
-    return [
-        article
-        for article in session.exec(
-            select(
-                database.Article,
-            ).where(database.Article.kind == kind)
-        ).unique()
-    ]
+    selection = select(
+        database.Article,
+    ).where(database.Article.kind == kind)
+    if status is not None:
+        selection = selection.where(database.Article.status == status.status)
+    return [article for article in session.exec(selection).unique()]
 
 
 @router.get("/article/{kind}/{article_id}", response_model=database.ArticlePublic)

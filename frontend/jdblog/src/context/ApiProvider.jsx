@@ -6,16 +6,12 @@ import axios from "axios";
 
 export const ApiContext = createContext(null);
 
-document.aaa = axios;
 function ApiProvider({ children }) {
   const { loginInfo, setLoginInfo } = useContext(LoginContext);
 
   const API = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
   });
-
-  // Flag to prevent multiple token refresh requests
-  let isRefreshing = false;
 
   function refreshAccessToken(callback) {
     axios

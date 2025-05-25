@@ -30,7 +30,6 @@ function EditPostLayout() {
         text,
         title,
       },
-      null,
       false,
       (res) => {
         setValue("text", res.data.text);

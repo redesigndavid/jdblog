@@ -1,13 +1,13 @@
 import React from "react";
 
 import { ApiContext } from "../context/ApiProvider";
+import { LoginContext } from "../context/LoginProvider";
 import GenericPostsLayout from "./GenericPostsLayout";
 import { useState, useEffect, useContext } from "react";
 
-function PostLayout() {
-
+function PostsLayout() {
   const { requester } = useContext(ApiContext);
-
+  const { isAdmin } = useContext(LoginContext);
   const [posts, setPosts] = useState(() => {
     return [];
   });
@@ -17,13 +17,17 @@ function PostLayout() {
   });
 
   useEffect(() => {
-    requester("get", "/article/post", null, false, (post) => {
+    const payload = !isAdmin && { status: "published" } || null;
+    console.log(payload);
+    console.log(isAdmin);
+
+    requester("post", "/article/post", payload, false, (post) => {
       setPosts(post.data);
     });
     requester("get", "/tag", null, false, (tags) => {
       setTags(tags.data);
     });
-  }, []);
+  }, [isAdmin]);
 
   return (
     <GenericPostsLayout
@@ -34,4 +38,4 @@ function PostLayout() {
   );
 }
 
-export default PostLayout;
+export default PostsLayout;

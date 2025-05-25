@@ -1,7 +1,7 @@
 import React from "react";
 import GenericPostsLayout from "./GenericPostsLayout";
 import { ApiContext } from "../context/ApiProvider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router";
 
 function TagPostLayout() {

@@ -73,6 +73,10 @@ class ArticleStatus(str, enum.Enum):
     published = "published"
 
 
+class ArticleStatusQuery(SQLModel):
+    status: ArticleStatus
+
+
 class AuthIdentity(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(

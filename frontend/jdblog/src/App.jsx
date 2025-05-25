@@ -13,14 +13,16 @@ function App() {
 
   useEffect(() => {
     requester("get", "/article/post", null, false, (res) => {
-      res.data.sort(
-        (b, a) =>
-          new Date(a.created_date).getTime() -
-          new Date(b.created_date).getTime(),
-      );
-      setPosts([...res.data]);
-      res.data.sort((b, a) => a.visits.length - b.visits.length);
-      setPopPosts([...res.data]);
+      if (res) {
+        res.data.sort(
+          (b, a) =>
+            new Date(a.created_date).getTime() -
+            new Date(b.created_date).getTime(),
+        );
+        setPosts([...res.data]);
+        res.data.sort((b, a) => a.visits.length - b.visits.length);
+        setPopPosts([...res.data]);
+      }
     });
     requester("get", "/tag", null, false, (tags) => {
       setTags(tags.data);
