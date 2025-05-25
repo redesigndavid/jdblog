@@ -47,7 +47,7 @@ function LoginProvider({ children }) {
         .then((res) => {
           setLoginInfo({
             ...res.data,
-            ...{ access_token: searchParams.get("access_token") },
+            ...{ access_token: searchParams.get("access_token"), refresh_token: searchParams.get("refresh_token") },
           });
         });
       setSearchParams({});
@@ -55,7 +55,7 @@ function LoginProvider({ children }) {
   }, []);
 
   return (
-    <LoginContext.Provider value={{ logOut, loginInfo, isAdmin, isLoggedIn }}>
+    <LoginContext.Provider value={{ logOut, loginInfo, isAdmin, isLoggedIn, setLoginInfo }}>
       {children}
     </LoginContext.Provider>
   );

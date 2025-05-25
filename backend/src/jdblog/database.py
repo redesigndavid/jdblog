@@ -119,6 +119,10 @@ class Token(SQLModel, table=True):
     )
 
 
+class RefreshToken(SQLModel):
+    refresh_token: str
+
+
 class ArticleTagLink(SQLModel, table=True):
     article_id: int | None = Field(
         default=None, foreign_key="article.id", primary_key=True

@@ -23,24 +23,30 @@ function EditPostLayout() {
   const { postId } = useParams();
 
   useEffect(() => {
-    requester("get", `/article/post/${postId}`, {
-      text,
-      title,
-    }).then((res) => {
-      setValue("text", res.data.text);
-      setValue("title", res.data.title);
-      setPublished(res.data.status == "published");
-      setPostTags(
-        res.data.tags.map((tag) => {
-          return tag.name;
-        }),
-      );
-      console.log(res.data.tags);
-    });
+    requester(
+      "get",
+      `/article/post/${postId}`,
+      {
+        text,
+        title,
+      },
+      null,
+      false,
+      (res) => {
+        setValue("text", res.data.text);
+        setValue("title", res.data.title);
+        setPublished(res.data.status == "published");
+        setPostTags(
+          res.data.tags.map((tag) => {
+            return tag.name;
+          }),
+        );
+      },
+    );
 
-    requester("get", "/tag").then((tags) => {
+    requester("get", "/tag", null, false, (tags) => {
       setTags(tags.data);
-    }, []);
+    });
   }, []);
 
   const update = () => {
@@ -78,23 +84,22 @@ function EditPostLayout() {
         created_date: null,
       },
       true,
-    ).then(() => {
-      requester("post", `/article/post/${postId}/tags`, postTags, true)
-        .then(() => {
-          if (postId == "new") {
-            nav("/");
-          } else {
-            nav(`/blog/${postId}`);
-          }
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          }
-        });
-    });
+      () => {
+        requester(
+          "post",
+          `/article/post/${postId}/tags`,
+          postTags,
+          true,
+          () => {
+            if (postId == "new") {
+              nav("/");
+            } else {
+              nav(`/blog/${postId}`);
+            }
+          },
+        );
+      },
+    );
   };
 
   return (

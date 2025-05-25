@@ -12,7 +12,7 @@ function App() {
   const { requester } = useContext(ApiContext);
 
   useEffect(() => {
-    requester("get", "/article/post").then((res) => {
+    requester("get", "/article/post", null, false, (res) => {
       res.data.sort(
         (b, a) =>
           new Date(a.created_date).getTime() -
@@ -21,10 +21,10 @@ function App() {
       setPosts([...res.data]);
       res.data.sort((b, a) => a.visits.length - b.visits.length);
       setPopPosts([...res.data]);
-    }, []);
-    requester("get", "/tag").then((tags) => {
+    });
+    requester("get", "/tag", null, false, (tags) => {
       setTags(tags.data);
-    }, []);
+    });
   }, []);
 
   return (

@@ -17,12 +17,12 @@ function TagPostLayout() {
   const { tagName } = useParams();
 
   useEffect(() => {
-    requester("get", `/tag/${tagName}`).then((res) => {
+    requester("get", `/tag/${tagName}`, null, false, (res) => {
       setPosts(res.data.articles);
-    }, []);
-    requester("get", `/tag`).then((tags) => {
+    });
+    requester("get", `/tag`, null, false, (tags) => {
       setTags(tags.data);
-    }, []);
+    });
   }, []);
 
   return (

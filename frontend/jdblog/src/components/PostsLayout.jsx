@@ -17,12 +17,12 @@ function PostLayout() {
   });
 
   useEffect(() => {
-    requester("get", "/article/post").then((post) => {
+    requester("get", "/article/post", null, false, (post) => {
       setPosts(post.data);
-    }, []);
-    requester("get", "/tag").then((tags) => {
+    });
+    requester("get", "/tag", null, false, (tags) => {
       setTags(tags.data);
-    }, []);
+    });
   }, []);
 
   return (

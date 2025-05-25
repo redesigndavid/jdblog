@@ -26,7 +26,7 @@ function PostLayout() {
   };
 
   useEffect(() => {
-    requester("get", `/article/post/${postId}`).then((res) => {
+    requester("get", `/article/post/${postId}`, null, false, (res) => {
       setPost(res.data);
       setComments(res.data.comments);
       document.title = `redesigndavid.com - ${res.data.title}`;
@@ -60,11 +60,16 @@ function PostLayout() {
           <div className="xl:w-2xs w-5xl" />
           <div className="xl:w-3xl w-5xl max-w-dvw  xl:px-0 px-4">
             <div className="text-4xl py-4">Discussion</div>
-            {comments?.map((comment) => {
-              return (
-                <Comment key={`comment-${comment.id}`} comment={comment} />
-              );
-            })}
+
+            {comments
+              .sort((a, b) => {
+                return Date.parse(a.created_date) - Date.parse(b.created_date);
+              })
+              ?.map((comment) => {
+                return (
+                  <Comment key={`comment-${comment.id}`} comment={comment} />
+                );
+              })}
             <CommentForm
               kind={"post"}
               articleId={post["id"]}

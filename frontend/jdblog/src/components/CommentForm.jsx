@@ -10,19 +10,21 @@ function CommentForm({ articleId, addComment, kind }) {
   const { isLoggedIn } = useContext(LoginContext);
   const { requester } = useContext(ApiContext);
 
-  useEffect(() => { }, []);
-
   const onSubmit = (data) => {
     requester(
       "post",
       `/article/${kind}/${articleId}/comment`,
       { text: data.comment },
       true,
-    ).then((res) => {
-      setFocus(false);
-      addComment(res.data);
-      setTimeout(reset, 10);
-    });
+      (res) => {
+        if (res != undefined) {
+          console.log(res);
+          setFocus(false);
+          addComment(res.data);
+          setTimeout(reset, 10);
+        }
+      },
+    );
   };
 
   const [isFocus, setFocus] = useState(false);
@@ -69,10 +71,10 @@ function CommentForm({ articleId, addComment, kind }) {
             />
           </form>
         )) || (
-            <div onClick={() => setChooseLogin(true)} className="">
-              Want to say something?
-            </div>
-          )}
+          <div onClick={() => setChooseLogin(true)} className="">
+            Want to say something?
+          </div>
+        )}
       </div>
     </>
   );

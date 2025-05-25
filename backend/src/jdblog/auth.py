@@ -94,7 +94,8 @@ class JWTBearer(HTTPBearer):  # pragma: no cover
                 )
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(
-                    status_code=403, detail="Invalid token or expired token."
+                    status_code=403,
+                    detail=f"Invalid token or expired token.",
                 )
             return credentials
         else:
@@ -216,6 +217,31 @@ async def register_user(
     ) as e:
         return {"message": "Failed to create user.", "error": e.args}
     return {"message": "user created successfully"}
+
+
+@router.post("/refresh")
+async def refresh_token(
+    session: database.MakeSession,
+    token: database.RefreshToken,
+):
+
+    try:
+        token_value = jwt.decode(
+            token.refresh_token, config.get("JWT_REFRESH_SECRET_KEY"), [ALGORITHM]
+        )
+    except InvalidTokenError:
+        return False
+    user_name = token_value["sub"]
+    try:
+        matching = session.exec(
+            select(database.AuthIdentity).where(
+                database.AuthIdentity.provider_user_id == user_name,
+            )
+        ).one()
+    except sqlalchemy.exc.NoResultFound:
+        return {"error": "No such user."}
+
+    return create_token(session, matching)
 
 
 @router.post("/login/password")
@@ -404,9 +430,3 @@ def create_token(session, auth_identity):
         session.rollback()
 
     raise RuntimeError("Failed to create token")  # pragma: no cover
-
-
-@router.get("/users/me")
-async def get_user(user: CurrentUser):
-    """Get all the users."""
-    return user
