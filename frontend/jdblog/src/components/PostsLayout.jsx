@@ -18,8 +18,6 @@ function PostsLayout() {
 
   useEffect(() => {
     const payload = !isAdmin && { status: "published" } || null;
-    console.log(payload);
-    console.log(isAdmin);
 
     requester("post", "/article/post", payload, false, (post) => {
       setPosts(post.data);

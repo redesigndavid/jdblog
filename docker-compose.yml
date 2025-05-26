@@ -1,5 +1,15 @@
 services:
-  web:
+  frontend:
+    build:
+      context: . 
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - backend
+
+  backend:
     build:
       context: .
       dockerfile: backend/Dockerfile

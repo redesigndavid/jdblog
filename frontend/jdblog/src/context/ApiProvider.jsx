@@ -37,7 +37,6 @@ function ApiProvider({ children }) {
     payload,
     useHeaders,
     callback = (res) => {
-      console.log("requester done");
       console.log(res.data);
     },
   ) => {

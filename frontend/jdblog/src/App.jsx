@@ -2,6 +2,7 @@ import profile from "/dmartephoto.png";
 import Tag from "./components/Tag";
 import PostSections from "./components/PostSections";
 import { ApiContext } from "./context/ApiProvider";
+import { LoginContext } from "./context/LoginProvider";
 import { useState, useEffect, useContext } from "react";
 import "./App.css";
 
@@ -10,9 +11,12 @@ function App() {
   const [popPosts, setPopPosts] = useState([]);
   const [tags, setTags] = useState([]);
   const { requester } = useContext(ApiContext);
+  const { isAdmin } = useContext(LoginContext);
 
   useEffect(() => {
-    requester("get", "/article/post", null, false, (res) => {
+
+    const payload = !isAdmin && { status: "published" } || null;
+    requester("post", "/article/post", payload, false, (res) => {
       if (res) {
         res.data.sort(
           (b, a) =>
