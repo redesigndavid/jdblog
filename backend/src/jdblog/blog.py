@@ -127,9 +127,11 @@ async def set_article_tags(
     ).first()
     if article is None:
         return
-    tags = [ensure_tag(session, database.Tag(name=tag)) for tag in tags]
+    dbtags: list[database.Tag] = [
+        ensure_tag(session, database.Tag(name=tag)) for tag in tags
+    ]
 
-    article.tags = tags
+    article.tags = dbtags
     session.commit()
 
 
