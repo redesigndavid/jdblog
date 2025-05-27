@@ -11,6 +11,65 @@ import { useParams } from "react-router";
 
 import { ApiContext } from "../context/ApiProvider";
 
+function AddTag({ tags, setTags, postTags, setPostTags }) {
+  const [showAddTagForm, setShowAddTagForm] = useState(false);
+  const { register, handleSubmit, setValue } = useForm();
+
+  const onSubmitNewTag = (data) => {
+    setTags([...tags, {name: data.tagname}]);
+    setPostTags([...postTags, data.tagname]);
+    setValue("tagname", "");
+    setShowAddTagForm(false);
+  };
+
+  return (
+    <>
+      {!showAddTagForm && (
+        <TagDiv
+          onClick={() => {
+            setShowAddTagForm(true);
+          }}
+          className="bg-amber-400 text-stone-900  line-clamp-1 rounded-full p-3 pr-4 flex flex-row "
+          tagname="addtag+"
+        />
+      )}
+      {showAddTagForm && (
+        <div>
+          <form
+            onSubmit={handleSubmit(onSubmitNewTag)}
+            className="flex flex-col gap-2"
+          >
+            <input
+              className={
+                "flex-grow text-white bg-stone-800 appearance-none rounded " +
+                "w-full p-2 leading-tight focus:outline-none "
+              }
+              {...register("tagname", { required: true })}
+            />
+            <div className="flex flex-row gap-2">
+              <button
+                onClick={() => {
+                  setValue("tagname", "");
+                  setShowAddTagForm(false);
+                }}
+                className="p-1 bg-stone-950 text-stone-300 w-full rounded-xl"
+              >
+                Cancel
+              </button>
+
+              <input
+                type="submit"
+                value="Save"
+                className="p-1 bg-stone-950 text-white w-full rounded-xl"
+              />
+            </div>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}
+
 function EditPostLayout() {
   const { requester } = useContext(ApiContext);
   const { watch, getValues, register, handleSubmit, setValue } = useForm();
@@ -118,6 +177,32 @@ function EditPostLayout() {
             </div>
           </div>
           <div className="p-4 bg-yellow-50 w-[50dvw] fixed top-0 right-0 h-dvh overflow-scroll">
+            <div className="text-black pt-4 pb-2">Tags</div>
+            <div className="flex flex-row flex-wrap gap-2 p-2">
+              {tags.map((tag) => {
+                return (
+                  <TagDiv
+                    className={
+                      ((postTags.includes(tag.name) &&
+                        "bg-amber-200 text-stone-900 ") ||
+                        " bg-stone-800 text-amber-50 ") +
+                      " line-clamp-1 rounded-full p-3 pr-4 flex flex-row "
+                    }
+                    onClick={() => {
+                      toggle(tag.name);
+                    }}
+                    tagname={tag.name}
+                    key={`tag-${tag.name}`}
+                  />
+                );
+              })}
+              <AddTag
+                tags={tags}
+                setTags={setTags}
+                postTags={postTags}
+                setPostTags={setPostTags}
+              />
+            </div>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="text-black pt-4 pb-2">Title</div>
               <input
@@ -148,27 +233,6 @@ function EditPostLayout() {
                   readOnly
                   className="checked:border-indigo-500 hidden"
                 />
-              </div>
-
-              <div className="text-black pt-4 pb-2">Tags</div>
-              <div className="flex flex-row flex-wrap gap-2 p-2">
-                {tags.map((tag) => {
-                  return (
-                    <TagDiv
-                      className={
-                        ((postTags.includes(tag.name) &&
-                          "bg-amber-200 text-stone-900 ") ||
-                          " bg-stone-800 text-amber-50 ") +
-                        " line-clamp-1 rounded-full p-3 pr-4 flex flex-row "
-                      }
-                      onClick={() => {
-                        toggle(tag.name);
-                      }}
-                      tagname={tag.name}
-                      key={`tag-${tag.name}`}
-                    />
-                  );
-                })}
               </div>
 
               <div className="text-black pt-4 pb-2">Body</div>
