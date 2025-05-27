@@ -20,9 +20,9 @@ function ApiProvider({ children }) {
       })
       .catch((error) => {
         if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
         }
       })
       .then((res) => {
@@ -37,7 +37,7 @@ function ApiProvider({ children }) {
     payload,
     useHeaders,
     callback = (res) => {
-      console.log(res.data);
+      // console.log(res.data);
     },
   ) => {
     return API[method](
@@ -65,16 +65,16 @@ function ApiProvider({ children }) {
                 }
               })
               .catch((error) => {
-                console.log("retry error");
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
+                // console.log("retry error");
+                // console.log(error.response.data);
+                // console.log(error.response.status);
+                // console.log(error.response.headers);
               });
           });
         } else if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
         }
       })
       .then((res) => {
