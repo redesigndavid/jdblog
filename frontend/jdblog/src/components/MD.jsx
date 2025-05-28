@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import Highlight from "react-highlight";
 import rehypeRaw from "rehype-raw";
 import { AA } from "../Tracker";
+import Image from "./Image"
 import "../hljs.css";
 
 const FlattenPre = (props) => {
@@ -34,7 +35,7 @@ function MD({ children }) {
     <>
       <div className="leading-8 prose prose-xl prose-pre:font-[Victor_Mono] prose-pre:text-md font-normal dark:prose-invert prose-a:text-emerald-500 xl:px-0 px-4">
         <Markdown
-          components={{ code: WrapHighlight, pre: FlattenPre, a: AA }}
+          components={{ code: WrapHighlight, pre: FlattenPre, a: AA, img: Image }}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
         >
