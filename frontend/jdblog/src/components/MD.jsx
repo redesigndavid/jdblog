@@ -22,7 +22,7 @@ const FlattenPre = (props) => {
 const WrapHighlight = (props) => {
   if (props.node.children[0].position) {
     return (
-      <code className="bg-amber-200 dark:bg-amber-800 before:ml-0.5 before:text-red-500 before:content-['`'] after:ml-0.5 after:text-red-500 after:content-['`'] rounded-xl p-1">
+      <code className="bg-amber-200/40 dark:bg-amber-800/40 before:ml-0.5 before:text-red-500 before:content-[''] after:ml-0.5 after:text-red-500 after:content-[''] rounded-xl p-1">
         {props.children}
       </code>
     );
