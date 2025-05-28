@@ -51,7 +51,7 @@ function Header() {
 
   const { nav } = useContext(NavigationContext);
 
-  const blog_post_regex = /^\/blog\/\d+$/gm;
+  const blog_post_regex = /^\/blog\/\d+/gm;
   return (
     <>
       <div
@@ -81,7 +81,7 @@ function Header() {
             <HeaderLink link="/blog" name="Blog" />
             {blog_post_regex.test(window.location.pathname) && isAdmin && (
               <HeaderLink
-                link={window.location.pathname + "/edit"}
+                link={[...window.location.pathname.split("/").slice(0, -1), "edit"].join("/")}
                 name="Edit"
                 adminColor
               />

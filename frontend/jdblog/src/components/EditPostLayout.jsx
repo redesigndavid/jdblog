@@ -152,7 +152,7 @@ function EditPostLayout() {
             if (postId == "new") {
               nav("/");
             } else {
-              nav(`/blog/${postId}`);
+              nav(`/blog/${postId}/${title.toLowerCase().replace(/\s+/g, "-")}`);
             }
           },
         );
