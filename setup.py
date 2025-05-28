@@ -22,6 +22,7 @@ requirements = [
     "pymongo",  # needed to install bson.json_utils.
     "luqum",
     "authlib",
+    "boto3",
 ]
 dev_requirements = [
     "pytest>=3",
