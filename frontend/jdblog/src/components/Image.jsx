@@ -1,11 +1,12 @@
 import { ApiContext } from "../context/ApiProvider";
 import { useEffect, useState, useContext } from "react";
 function Image(props) {
+  console.log(props);
   const { src, ...imgprops } = props;
   const [imageUrl, setImageUrl] = useState(src);
   const { requester } = useContext(ApiContext);
   useEffect(() => {
-    requester("get", `image\?path\=${props.src}`, null, false, (r) => {
+    requester("get", `static\?path\=${props.src}`, null, false, (r) => {
       setImageUrl(r.data);
     });
   }, []);

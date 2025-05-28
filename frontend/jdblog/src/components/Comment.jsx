@@ -1,4 +1,5 @@
 import TimeAgo from "react-timeago";
+import Image from "./Image"
 
 function splitmix32(a) {
   return function() {
@@ -25,7 +26,7 @@ function Comment({ comment }) {
           <div className="items-center mr-3 text-sm text-stone-900 dark:text-stone-50 font-semibold flex flex-row">
             <div className="relative">
               <div className="w-8 h-8 rounded-full top-0 left-0 mr-4 ">
-                <img
+                <Image
                   className="w-8 h-8 rounded-full object-cover absolute"
                   src={comment.owner.profile.photo}
                   onError={(ev) => {
