@@ -39,7 +39,7 @@ function MD({ children }) {
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
         >
-          {children}
+          {children.replace(/--/g, '—')}
         </Markdown>
       </div>
     </>
