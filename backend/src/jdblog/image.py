@@ -54,6 +54,6 @@ def get_presigned_url(
 
     return s3_client.generate_presigned_url(
         "get_object",
-        Params={"Bucket": "redesigndavid", "Key": hash},
+        Params={"Bucket": config.get("AWS_BUCKET_NAME"), "Key": hash},
         ExpiresIn=3600,
     )
