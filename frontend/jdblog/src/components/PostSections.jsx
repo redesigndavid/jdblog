@@ -28,7 +28,7 @@ function PostSection({ title, posts }) {
             <div
               key={`post-${post.id}`}
               onClick={() => {
-                nav(`/blog/${post.id}`);
+                nav(`/blog/${post.id}/${post.title.toLowerCase().replace(/\s+/g, "-")}`);
               }}
               className="xl:flex-nowrap flex flex-col-reverse md:flex-row my-2 text-pretty text-xl cursor-pointer"
             >

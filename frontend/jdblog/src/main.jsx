@@ -30,11 +30,11 @@ createRoot(document.getElementById("root")).render(
                     <Route path="test" element={<Test />} />
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="tag/:tagName" element={<TagPostsLayout />} />
-                    <Route path="blog/:postId" element={<PostLayout />} />
                     <Route
                       path="blog/:postId/edit"
                       element={<EditPostLayout />}
                     />
+                    <Route path="blog/:postId/:title" element={<PostLayout />} />
                     <Route path="blog" element={<PostsLayout />} />
                   </Route>
                 </Routes>
