@@ -23,8 +23,8 @@ export function track(path, referrer, url) {
 
 export function AA(props) {
   const [visitCount, setVisitCount] = useState(0);
-  const { noVisits, href, ...new_props } = props;
-  const { jump, nav } = useContext(NavigationContext);
+  const { newTab, noVisits, href, ...new_props } = props;
+  const { jump, nav, newtab } = useContext(NavigationContext);
 
   useEffect(() => {
     axios
@@ -36,6 +36,8 @@ export function AA(props) {
   const aJump = () => {
     if (href.startsWith(window.location.origin)) {
       nav(href.slice(window.location.origin.length));
+    } else if (newTab) {
+      newtab(href);
     } else {
       jump(href);
     }

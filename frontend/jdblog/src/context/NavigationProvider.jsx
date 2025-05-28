@@ -15,9 +15,13 @@ function NavigationProvider({ children }) {
     track(null, `${window.location.href}`, url);
     window.location = url;
   }
+  const newtab = (url) => {
+    track(null, `${window.location.href}`, url);
+    window.open(url, "_blank").focus();
+  }
 
   return (
-    <NavigationContext.Provider value={{nav, jump}}>
+    <NavigationContext.Provider value={{nav, jump, newtab}}>
       {children}
     </NavigationContext.Provider>
   );

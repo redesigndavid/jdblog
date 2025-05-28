@@ -25,15 +25,15 @@ function Footer() {
         <div className="flex-auto" />
         <div className="flex flex-col">
           <div className="flex flex-row justify-center items-center gap-2 dark:text-white text-dark pb-8">
-            <AA noVisits href="https://github.com/redesigndavid">
+            <AA newTab noVisits href="https://github.com/redesigndavid">
               <AiFillGithub size={28} />
             </AA>
 
-            <AA noVisits href="https://linkedin.com/in/redesigndavid">
+            <AA newTab noVisits href="https://linkedin.com/in/redesigndavid">
               <AiFillLinkedin size={28} />
             </AA>
 
-            <AA noVisits href="https://www.instagram.com/redesigndavid">
+            <AA newTab noVisits href="https://www.instagram.com/redesigndavid">
               <AiFillInstagram size={28} />
             </AA>
 
