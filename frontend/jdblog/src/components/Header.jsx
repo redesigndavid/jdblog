@@ -28,14 +28,14 @@ function HeaderLink({ link, name, adminColor = false }) {
       }
     >
       <div className="flex-auto" />
-      <div
+      <a
         className={(currentLink && "border-b-4 pb-2") || ""}
         onClick={() => {
           nav(link);
         }}
       >
         {name}
-      </div>
+      </a>
       <div className="flex-auto" />
     </div>
   );

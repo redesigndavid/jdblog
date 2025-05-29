@@ -25,7 +25,8 @@ function PostSection({ title, posts }) {
             return Date.parse(a.created_date) - Date.parse(b.created_date);
           })
           .map((post) => (
-            <div
+            <a
+              href={`/blog/${post.id}/${post.title.toLowerCase().replace(/\s+/g, "-")}`}
               key={`post-${post.id}`}
               onClick={() => {
                 nav(`/blog/${post.id}/${post.title.toLowerCase().replace(/\s+/g, "-")}`);
@@ -50,7 +51,7 @@ function PostSection({ title, posts }) {
               <div className="text-xs md:text-lg ">
                 {correctTime(post.created_date)}
               </div>
-            </div>
+            </a>
           ))}
       </div>
     </div>

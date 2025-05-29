@@ -22,7 +22,8 @@ function Tag({ tagname }) {
 
   return (
     <>
-      <div
+      <a
+        href={`/tag/${tagname}`}
         onClick={() => {
           nav(`/tag/${tagname}`);
         }}
@@ -30,7 +31,7 @@ function Tag({ tagname }) {
       >
         <TagDiv tagname={tagname} />
         <div className="flex-auto" />
-      </div>
+      </a>
     </>
   );
 }
