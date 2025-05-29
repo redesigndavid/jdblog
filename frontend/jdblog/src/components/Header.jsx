@@ -1,12 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context/ThemeProvider";
-import { MdOutlineLogin, MdOutlineLogout } from "react-icons/md";
 import { NavigationContext } from "../context/NavigationProvider";
-import { AA } from "../Tracker";
 
-import profile from "/dmartephoto.png";
-import { AiFillGithub, AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
-import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import { RxRocket } from "react-icons/rx";
 import { LoginContext } from "../context/LoginProvider";
 
@@ -69,7 +64,7 @@ function Header() {
             className="pt-1 flex-1 m-auto flex flex-row gap-4 cursor-pointer"
           >
             <div className="w-12 h-12 rounded-full bg-blue-500 justify-items-center">
-              <RxRocket size={24} className="m-auto h-12 w-12 p-3 text-white" />
+              <img src="/jdmartelogo.svg"  className="m-auto h-12 w-12 text-white" />
             </div>
             <div className="my-auto text-xl font-special hidden md:inline-block">
               redesigndavid.com
