@@ -39,7 +39,7 @@ class User(SQLModel, table=True):  # type: ignore
     profile: Union["Profile", None] = Relationship(
         back_populates="user", sa_relationship_kwargs={"lazy": "joined"}
     )
-    auth_identity: Union["AuthIdentity", None] = Relationship(
+    auth_identity: List["AuthIdentity"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"lazy": "joined"}
     )
 

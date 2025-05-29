@@ -2,6 +2,7 @@ import unittest.mock
 from unittest.mock import AsyncMock
 
 from fastapi.testclient import TestClient
+
 from jdblog import database
 
 
@@ -38,6 +39,7 @@ def test_get_users(user: database.UserPub, test_client: TestClient):
                 "photo": "Photo",
                 "user_id": 1,
             },
+            "user_type": "member",
             "username": "foobar",
         }
     ]

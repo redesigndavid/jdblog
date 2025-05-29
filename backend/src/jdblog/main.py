@@ -52,11 +52,15 @@ async def get_me_user(user: auth.CurrentUser):
 
 @app.get("/user/{user_id}", response_model=database.UserPub)
 def get_user(user_id: int, session: MakeSession):
-    return session.exec(
-        select(database.User).where(
-            database.User.id == user_id,
+    return (
+        session.exec(
+            select(database.User).where(
+                database.User.id == user_id,
+            )
         )
-    ).one()
+        .unique()
+        .one()
+    )
 
 
 @app.get("/users", response_model=list[database.UserPub])
@@ -71,7 +75,7 @@ async def get_users(
             select(
                 database.User,
             )
-        )
+        ).unique()
     ]
 
 

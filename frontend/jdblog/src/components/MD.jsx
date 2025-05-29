@@ -16,7 +16,7 @@ const FlattenPre = (props) => {
   }
 
   // Default fallback
-  return <pre>{children}</pre>;
+  return <pre className="p-1">{children}</pre>;
 };
 
 const WrapHighlight = (props) => {
@@ -33,7 +33,7 @@ const WrapHighlight = (props) => {
 function MD({ children }) {
   return (
     <>
-      <div className="leading-8 prose prose-xl prose-pre:font-[Victor_Mono] prose-pre:text-md font-normal dark:prose-invert prose-a:text-emerald-500 xl:px-0 px-4">
+      <div className="leading-8 prose prose-xl prose-pre:p-2 prose-pre:font-[Victor_Mono] prose-pre:text-md font-normal dark:prose-invert prose-a:text-emerald-500 xl:px-0 px-4">
         <Markdown
           components={{ code: WrapHighlight, pre: FlattenPre, a: AA, img: Image }}
           remarkPlugins={[remarkGfm]}

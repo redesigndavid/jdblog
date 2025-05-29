@@ -1,7 +1,7 @@
 import json
 import urllib.parse
 from datetime import UTC, datetime, timedelta
-from typing import Annotated, Any, Callable, Optional, Union
+from typing import Annotated, Any, Callable, Optional, Tuple, Union
 
 import bcrypt
 import jwt
@@ -12,7 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError
-from sqlmodel import select
+from sqlmodel import Session, select
 
 from jdblog import database
 from jdblog.config import config
@@ -194,20 +194,24 @@ async def register_user(
 ):
     # Hash the password before saving.
     password = get_hashed_password(user.password).decode()
-    create_user = database.User(username=user.username)
+
+    create_user = ensure_user(
+        session,
+        user.username,
+        user.firstName,
+        user.lastName,
+        user.photo,
+    )
+
     auth_identity = database.AuthIdentity(
         provider_user_id=user.username,
         provider=database.AuthProvider.password,
         password_hash=password,
     )
-    user_profile = database.Profile(
-        firstName=user.firstName, lastName=user.lastName, photo=user.photo
-    )
+    session.add(auth_identity)
 
-    create_user.auth_identity = auth_identity
-    create_user.profile = user_profile
-
-    session.add(create_user)
+    create_user.auth_identity.append(auth_identity)
+    session.add(auth_identity)
 
     try:
         session.commit()
@@ -216,6 +220,7 @@ async def register_user(
         sqlalchemy.exc.PendingRollbackError,
     ) as e:
         return {"message": "Failed to create user.", "error": e.args}
+
     return {"message": "user created successfully"}
 
 
@@ -253,19 +258,22 @@ async def login_password(
     request.session.clear()
     try:
         matching = session.exec(
-            select(database.AuthIdentity).where(
+            select(database.AuthIdentity)
+            .where(
                 database.AuthIdentity.provider_user_id == user.username,
             )
-        ).one()
+            .where(database.AuthIdentity.provider == database.AuthProvider.password)
+        ).unique()
     except sqlalchemy.exc.NoResultFound:
         return {"error": "No such user."}
 
-    if not verify_password(user.password, matching.password_hash or ""):
-        return {"error": "Incorrect password"}
+    for match in matching:
+        if verify_password(user.password, match.password_hash or ""):
 
-    token = create_token(session, matching)
+            token = create_token(session, match)
 
-    return token
+            return token
+    return {"error": "Incorrect password"}
 
 
 @router.get("/login/{provider}")
@@ -290,29 +298,86 @@ async def login(
     )
 
 
-def auth_google_user_creator(token: dict) -> database.User:
+def ensure_user(
+    session: Session, email: str, first_name: str, last_name: str, photo: str
+):
+
+    try:
+        user = (
+            session.exec(select(database.User).where(database.User.username == email))
+            .unique()
+            .one()
+        )
+    except sqlalchemy.exc.NoResultFound:
+        user = database.User(username=email)
+        user_profile = database.Profile(
+            firstName=first_name,
+            lastName=last_name,
+            photo=photo,
+        )
+        user.profile = user_profile
+
+        session.add(user)
+        session.add(user_profile)
+    return user
+
+
+def ensure_auth_identity(
+    session: Session,
+    provider: database.AuthProvider,
+    email: str,
+    user: database.User,
+):
+
+    try:
+        auth_identity = (
+            session.exec(
+                select(database.AuthIdentity)
+                .where(database.AuthIdentity.provider == provider)
+                .where(database.AuthIdentity.provider_user_id == email)
+            )
+            .unique()
+            .one()
+        )
+    except sqlalchemy.exc.NoResultFound:
+        auth_identity = database.AuthIdentity(  # type: ignore
+            provider=provider,
+            provider_user_id=email,
+        )
+        user.auth_identity.append(auth_identity)
+        session.add(auth_identity)
+    return auth_identity
+
+
+def auth_google_user_creator(
+    session: Session, token: dict
+) -> Tuple[database.User, database.AuthIdentity]:
     user_info = token.get("userinfo")
 
     if user_info is None:
         raise KeyError("userinfo not found")
 
-    user = database.User(username=user_info.get("email"))
-    auth_identity = database.AuthIdentity(  # type: ignore
-        provider=database.AuthProvider.google,
-        provider_user_id=user_info.get("email"),
+    user = ensure_user(
+        session,
+        user_info.get("email"),
+        user_info.get("given_name"),
+        user_info.get("family_name"),
+        user_info.get("picture"),
     )
-    user_profile = database.Profile(
-        firstName=user_info.get("given_name"),
-        lastName=user_info.get("family_name"),
-        photo=user_info.get("picture"),
+    auth_identity = ensure_auth_identity(
+        session,
+        database.AuthProvider.google,
+        user_info.get("email"),
+        user,
     )
 
-    user.auth_identity = auth_identity
-    user.profile = user_profile
-    return user
+    return user, auth_identity
 
 
-def auth_github_user_creator(token: dict) -> database.User:
+def auth_github_user_creator(
+    session: Session,
+    token: dict,
+) -> Tuple[database.User, database.AuthIdentity]:
     emails = requests.get(
         url="https://api.github.com/user/emails",
         headers={"authorization": f"Bearer {token.get('access_token')}"},
@@ -324,20 +389,21 @@ def auth_github_user_creator(token: dict) -> database.User:
         headers={"authorization": f"Bearer {token.get('access_token')}"},
     ).json()
 
-    user = database.User(username=email)
-    auth_identity = database.AuthIdentity(  # type: ignore
-        provider=database.AuthProvider.github,
-        provider_user_id=email,
+    user = ensure_user(
+        session,
+        email,
+        content.get("name"),
+        "",
+        content.get("avatar_url"),
     )
-    user_profile = database.Profile(
-        firstName=content.get("name"),
-        lastName="",
-        photo=content.get("avatar_url"),
+    auth_identity = ensure_auth_identity(
+        session,
+        database.AuthProvider.github,
+        email,
+        user,
     )
 
-    user.auth_identity = auth_identity
-    user.profile = user_profile
-    return user
+    return user, auth_identity
 
 
 def get_user_creator(provider: str) -> Callable:
@@ -365,12 +431,7 @@ async def auth(
     state = json.loads(urllib.parse.unquote(raw_state))
     redirect_path = state.get("redirect", "/")
 
-    user = get_user_creator(provider)(token)
-
-    auth_identity = user.auth_identity
-
-    # Only need to add the user, profile gets created too.
-    session.add(database.User.model_validate(user))
+    user, auth_identity = get_user_creator(provider)(session, token)
 
     try:
         session.commit()
@@ -430,3 +491,16 @@ def create_token(session, auth_identity):
         session.rollback()
 
     raise RuntimeError("Failed to create token")  # pragma: no cover
+
+
+@router.get("/ttt")
+def ttt(
+    session: database.MakeSession,
+):
+    return list(
+        session.exec(
+            select(database.User).where(
+                database.User.username == "redesigndavid@gmail.com",
+            )
+        )
+    )

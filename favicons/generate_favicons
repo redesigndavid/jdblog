@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+import os
+import shutil
+
+from PIL import Image
+
+dst_folder = "./tmp/"
+dst_folder = "../frontend/jdblog/public/"
+
+variations = [
+    (512, "web-app-manifest-512x512.png"),
+    (192, "web-app-manifest-192x192.png"),
+    (96, "favicon-96x96.png"),
+    (180, "apple-touch-icon.png"),
+]
+for variation in variations:
+    size, fn = variation
+    img = Image.open("favicon_large.png")
+    img.thumbnail((size, size), Image.Resampling.LANCZOS)
+    img.save(os.path.join(dst_folder, fn))
+
+img = Image.open("favicon_large.png")
+img.thumbnail((size, size), Image.Resampling.LANCZOS)
+img.save(
+    os.path.join(dst_folder, "favicon.ico"),
+    sizes=[(16, 16), (32, 32), (48, 48), (64, 64)],
+)
+shutil.copy("/Users/redesigndavid/Downloads/favicon/site.webmanifest", dst_folder)
+shutil.copy("favicon.svg", dst_folder)

@@ -4,9 +4,11 @@ from unittest.mock import Mock
 
 import pytest
 import requests
+from asyncmock import AsyncMock
 from fastapi.testclient import TestClient
-from jdblog import auth, database
 from sqlmodel import Session, select
+
+from jdblog import auth, database
 
 
 @pytest.fixture
@@ -36,34 +38,6 @@ def test_register(test_client: TestClient):
     assert response.json() == {"message": "user created successfully"}
 
 
-def test_register_fails(user: database.UserPub, test_client: TestClient):
-    response = test_client.post(
-        "/register/password",
-        json={
-            "username": "foobar",
-            "password": "foobar",
-            "firstName": "Hello First",
-            "lastName": "Last Name",
-            "photo": "photo",
-        },
-    )
-    response = test_client.post(
-        "/register/password",
-        json={
-            "username": "foobar",
-            "password": "foobar",
-            "firstName": "Hello First",
-            "lastName": "Last Name",
-            "photo": "photo",
-        },
-    )
-    assert response.status_code == 200
-    assert response.json() == {
-        "message": "Failed to create user.",
-        "error": unittest.mock.ANY,
-    }
-
-
 def test_login(test_client: TestClient):
     test_client.post(
         "/register/password",
@@ -88,6 +62,7 @@ def test_login(test_client: TestClient):
             [
                 "username",
                 "refresh_token",
+                "id",
                 "created_date",
                 "access_token",
                 "status",
@@ -162,6 +137,7 @@ def test_double_login(test_client: TestClient):
             [
                 "username",
                 "refresh_token",
+                "id",
                 "created_date",
                 "access_token",
                 "status",
@@ -170,23 +146,24 @@ def test_double_login(test_client: TestClient):
     )
 
 
-def test_auth_google_user_creator(fake_google_token: dict):
-    user = auth.auth_google_user_creator(fake_google_token)
+def test_auth_google_user_creator(fake_google_token: dict, session: Session):
+    user, auth_identity = auth.auth_google_user_creator(session, fake_google_token)
     assert user.username == fake_google_token["userinfo"]["email"]
-    assert user.auth_identity.provider_user_id == fake_google_token["userinfo"]["email"]
-    assert user.auth_identity.provider == database.AuthProvider.google
+    assert auth_identity in user.auth_identity
+    assert auth_identity.provider_user_id == fake_google_token["userinfo"]["email"]
+    assert auth_identity.provider == database.AuthProvider.google
     assert user.profile.firstName == fake_google_token["userinfo"]["given_name"]
     assert user.profile.lastName == fake_google_token["userinfo"]["family_name"]
     assert user.profile.photo == fake_google_token["userinfo"]["picture"]
 
 
-def test_auth_google_user_creator_bad(fake_google_token: dict):
+def test_auth_google_user_creator_bad(fake_google_token: dict, session: Session):
     fake_google_token.pop("userinfo")
     with pytest.raises(KeyError):
-        auth.auth_google_user_creator(fake_google_token)
+        auth.auth_google_user_creator(session, fake_google_token)
 
 
-def test_auth_github_user_creator(mocker):
+def test_auth_github_user_creator(mocker, session: Session):
     mocked = mocker.Mock()
     mocked_get = mocker.patch.object(requests, "get")
 
@@ -199,10 +176,13 @@ def test_auth_github_user_creator(mocker):
 
     mocked_get.side_effect = _mock_get
 
-    user = auth.auth_github_user_creator({"access_token": "footoken"})
+    user, auth_identity = auth.auth_github_user_creator(
+        session, {"access_token": "footoken"}
+    )
     assert user.username == "hello@hello.com"
-    assert user.auth_identity.provider_user_id == "hello@hello.com"
-    assert user.auth_identity.provider == database.AuthProvider.github
+    assert auth_identity.provider_user_id == "hello@hello.com"
+    assert auth_identity.provider == database.AuthProvider.github
+    assert auth_identity in user.auth_identity
     assert user.profile.firstName == "Name"
     assert user.profile.lastName == ""
     assert user.profile.photo == "avatarurl"
@@ -246,8 +226,8 @@ def test_auth_google(test_client: TestClient, oauth: Mock, session: Session):
         )
     ).first()
     assert user.username == "email@helloworld.com"
-    assert user.auth_identity.provider_user_id == "email@helloworld.com"
-    assert user.auth_identity.provider == database.AuthProvider.google
+    assert user.auth_identity[0].provider_user_id == "email@helloworld.com"
+    assert user.auth_identity[0].provider == database.AuthProvider.google
     assert user.profile.firstName == "given_name"
     assert user.profile.lastName == "family_name"
     assert response.status_code == 307

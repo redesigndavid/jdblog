@@ -31,6 +31,8 @@ dev_requirements = [
     "isort",
     "pip",
     "ruff",
+    "asyncmock",
+    "pytest-asyncio",
 ]
 
 setup(

@@ -71,8 +71,15 @@ async def create_article(
     current_user: auth.CurrentUser,
 ):
     article.kind = kind
+
     if article.created_date is None:
-        article.created_date = datetime.datetime.utcnow()
+        article.created_date = datetime.datetime.now(datetime.timezone.utc)
+    else:
+        article.created_date = datetime.datetime.fromtimestamp(
+            article.created_date,
+            datetime.timezone.utc,
+        )
+
     article.owner = current_user
     session.add(article)
     session.commit()
