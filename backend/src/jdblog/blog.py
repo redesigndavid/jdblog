@@ -195,6 +195,25 @@ async def untag_article(
         session.commit()
 
 
+@router.post("/article/{kind}/{article_id}/delete")
+async def delete_article(
+    article_id: int,
+    kind: GetKind,
+    session: database.MakeSession,
+    _current_user: auth.CurrentUser,
+):
+
+    article = session.exec(
+        select(database.Article).where(
+            database.Article.id == article_id, database.Article.kind == kind
+        )
+    ).first()
+    if article is None:
+        return
+    session.delete(article)
+    session.commit()
+
+
 @router.post(
     "/article/{kind}/{article_id}/comment", response_model=database.CommentPublic
 )
