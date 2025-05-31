@@ -102,6 +102,7 @@ async def update_article(
     dbarticle.text = article.text
     dbarticle.title = article.title
     dbarticle.status = article.status
+
     session.add(dbarticle)
     session.commit()
 

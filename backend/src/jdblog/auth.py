@@ -238,11 +238,15 @@ async def refresh_token(
         return False
     user_name = token_value["sub"]
     try:
-        matching = session.exec(
-            select(database.AuthIdentity).where(
-                database.AuthIdentity.provider_user_id == user_name,
+        matching = (
+            session.exec(
+                select(database.AuthIdentity).where(
+                    database.AuthIdentity.provider_user_id == user_name,
+                )
             )
-        ).one()
+            .unique()
+            .one()
+        )
     except sqlalchemy.exc.NoResultFound:
         return {"error": "No such user."}
 
@@ -491,16 +495,3 @@ def create_token(session, auth_identity):
         session.rollback()
 
     raise RuntimeError("Failed to create token")  # pragma: no cover
-
-
-@router.get("/ttt")
-def ttt(
-    session: database.MakeSession,
-):
-    return list(
-        session.exec(
-            select(database.User).where(
-                database.User.username == "redesigndavid@gmail.com",
-            )
-        )
-    )
