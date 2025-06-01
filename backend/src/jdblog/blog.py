@@ -76,8 +76,7 @@ async def create_article(
         article.created_date = datetime.datetime.now(datetime.timezone.utc)
     else:
         article.created_date = datetime.datetime.fromtimestamp(
-            article.created_date,
-            datetime.timezone.utc,
+            article.created_date, datetime.timezone.utc
         )
 
     article.owner = current_user
@@ -102,6 +101,10 @@ async def update_article(
     dbarticle.text = article.text
     dbarticle.title = article.title
     dbarticle.status = article.status
+
+    dbarticle.created_date = datetime.datetime.fromtimestamp(
+        article.created_date, datetime.timezone.utc
+    )
 
     session.add(dbarticle)
     session.commit()
