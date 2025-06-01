@@ -75,9 +75,7 @@ async def create_article(
     if article.created_date is None:
         article.created_date = datetime.datetime.now(datetime.timezone.utc)
     else:
-        article.created_date = datetime.datetime.fromtimestamp(
-            article.created_date, datetime.timezone.utc
-        )
+        article.created_date = datetime.datetime.fromisoformat(article.created_date)
 
     article.owner = current_user
     session.add(article)
@@ -101,12 +99,9 @@ async def update_article(
     dbarticle.text = article.text
     dbarticle.title = article.title
     dbarticle.status = article.status
+    dbarticle.created_date = datetime.datetime.fromisoformat(article.created_date)
+    dbarticle = database.Article.model_validate(dbarticle)
 
-    dbarticle.created_date = datetime.datetime.fromtimestamp(
-        article.created_date, datetime.timezone.utc
-    )
-
-    session.add(dbarticle)
     session.commit()
 
     return dbarticle
