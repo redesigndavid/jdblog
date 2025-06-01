@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Highlight from "react-highlight";
 import rehypeRaw from "rehype-raw";
 import { AA } from "../Tracker";
-import Image from "./Image"
+import Image from "./Image";
+import mermaid from "mermaid";
+
 import "../hljs.css";
+
+function Mermaid(props) {
+
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "forest",
+      securityLevel: "loose",
+      fontFamily: "monospace",
+    });
+
+    mermaid.contentLoaded();
+  }, []);
+
+  return (
+    <div className="mermaid flex flex-row justify-center text-white bg-stone-500 rounded-xl p-4">
+      {props.chart.replaceAll("—", "--")}
+    </div>
+  );
+}
 
 const FlattenPre = (props) => {
   const pretype = (<WrapHighlight />).type;
@@ -27,6 +49,10 @@ const WrapHighlight = (props) => {
       </code>
     );
   }
+  if (props.className == "language-mermaid") {
+    return <Mermaid chart={props.children} />;
+  }
+
   return <Highlight {...props} />;
 };
 
@@ -35,11 +61,16 @@ function MD({ children }) {
     <>
       <div className="leading-8 prose prose-xl prose-pre:p-2 prose-pre:font-[Victor_Mono] prose-pre:text-md font-normal dark:prose-invert prose-a:text-emerald-500 xl:px-0 px-4">
         <Markdown
-          components={{ code: WrapHighlight, pre: FlattenPre, a: AA, img: Image }}
+          components={{
+            code: WrapHighlight,
+            pre: FlattenPre,
+            a: AA,
+            img: Image,
+          }}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
         >
-          {children.replace(/--/g, '—')}
+          {children.replaceAll("--", "—")}
         </Markdown>
       </div>
     </>
