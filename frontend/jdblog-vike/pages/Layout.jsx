@@ -1,67 +1,156 @@
-export { Layout }
+export { Layout };
+import "./Layout.css";
+import React from "react";
+import { AiFillGithub, AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
+import { FaRegCopyright } from "react-icons/fa";
+import { clientOnly } from "vike-react/clientOnly";
+import { BsCircleFill } from "react-icons/bs";
+import { usePageContext } from "vike-react/usePageContext";
 
-import React from 'react'
-import './Layout.css'
+import { navigate, reload } from "vike/client/router";
+
+const ClientLightDarkClientOnly = clientOnly(
+  () => import("@components/LightDarkButton"),
+);
+const LogOutButtonClientOnly = clientOnly(
+  () => import("@components/LogOutButton"),
+);
+
+function Footer() {
+  const pageContext = usePageContext();
+  const logOut = pageContext.globalContext.logOut;
+  const isLoggedIn = pageContext.globalContext.isLoggedIn;
+
+  return (
+    <>
+      <div className="flex flex-row w-full rounded-t-xl pt-12 pb-4">
+        <div className="flex-auto" />
+        <div className="flex flex-col">
+          <div className="flex flex-row justify-center items-center gap-2 dark:text-white text-dark pb-8">
+            <a href="https://github.com/redesigndavid">
+              <AiFillGithub size={28} />
+            </a>
+
+            <a href="https://linkedin.com/in/redesigndavid">
+              <AiFillLinkedin size={28} />
+            </a>
+
+            <a href="https://www.instagram.com/redesigndavid">
+              <AiFillInstagram size={28} />
+            </a>
+
+            <div className="h-14 border-l-2" />
+            <ClientLightDarkClientOnly fallback={<BsCircleFill size={28} />} />
+
+            <LogOutButtonClientOnly isLoggedIn={isLoggedIn} logOut={logOut} />
+
+          </div>
+          <div className="flex flex-row justify-center items-center gap-2 dark:text-white text-dark pb-4">
+            <FaRegCopyright className="m-auto" />{" "}
+            <div className="m-auto align-middle">
+              2025 David Marte. All Rights Reserved.
+            </div>
+          </div>
+        </div>
+        <div className="flex-auto" />
+      </div>
+    </>
+  );
+}
+
+function HeaderLink({ link, name }) {
+
+  const pageContext = usePageContext();
+
+  const currentLink = link === "/" ? pageContext.urlPathname == "/" : pageContext.urlPathname.startsWith(link)
+
+  return (
+    <div className="h-12 justify-items-center flex flex-col py-5 cursor-pointer ">
+      <div className="flex-auto" />
+      <a className={currentLink && "border-b-4 pb-2" || ""} href={link}>{name}</a>
+      <div className="flex-auto" />
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <>
+      <div className={"flex flex-row w-full py-3 dark:text-white text-dark "}>
+        <div className="flex-auto" />
+        <div className="w-full xl:w-7xl pl-4 pr-8 xl:px-0 flex-row flex ">
+          <a
+            href="/"
+            className="pt-1 flex-1 m-auto flex flex-row gap-4 cursor-pointer"
+          >
+            <div className="w-12 h-12 rounded-full bg-blue-500 justify-items-center">
+              <img
+                src="/jdmartelogo.svg"
+                className="m-auto h-12 w-12 text-white"
+              />
+            </div>
+            <div className="my-auto text-xl font-special hidden md:inline-block">
+              redesigndavid.com
+            </div>
+          </a>
+
+          <div className="flex flex-row gap-8 justify-around">
+            <HeaderLink link="/" name="Home" />
+            <HeaderLink link="/blog" name="Blog" />
+            <div></div>
+          </div>
+        </div>
+        <div className="flex-auto" />
+      </div>
+    </>
+  );
+}
+
+const setLoginInfo = (loginfo) => {
+  // save to state and localstorage
+  // setLoginInfoState(loginfo);
+  localStorage.setItem("loginInfo", JSON.stringify(loginfo));
+  // setIsAdminLogin(loginfo.user_type == "admin");
+};
 
 function Layout({ children }) {
-  return (
-    <PageLayout>
-      <Sidebar>
-        <a className="navitem" href="/">
-          Home
-        </a>
-        <a className="navitem" href="/about">
-          About
-        </a>
-      </Sidebar>
-      <Content>{children}</Content>
-    </PageLayout>
-  )
-}
+  const pageContext = usePageContext();
 
-function PageLayout({ children }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        maxWidth: 900,
-        margin: 'auto',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+  const logOut = () => {
+    // clear login info
+    pageContext.globalContext.isLoggedIn = false;
+    localStorage.removeItem("loginInfo");
 
-function Sidebar({ children }) {
-  return (
-    <div
-      style={{
-        padding: 20,
-        paddingTop: 42,
-        flexShrink: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        lineHeight: '1.8em',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+    reload();
+  };
 
-function Content({ children }) {
+  pageContext.globalContext.logOut = logOut;
+  if (pageContext.isClientSide) {
+
+    if ("access_token" in pageContext.urlParsed.search) {
+      setLoginInfo(pageContext.urlParsed.search);
+      pageContext.globalContext.isLoggedIn = true;
+      navigate(pageContext.urlPathname, { keepScrollPosition: true }).then(
+        () => {
+          console.log("Logged in");
+        },
+      );
+    } else if (typeof localStorage.loginInfo !== "undefined") {
+      const loginInfo = JSON.parse(localStorage.loginInfo);
+      setLoginInfo(loginInfo);
+      pageContext.globalContext.isLoggedIn = true;
+    }
+  }
+
   return (
-    <div
-      style={{
-        padding: 20,
-        paddingBottom: 50,
-        borderLeft: '2px solid #eee',
-        minHeight: '100vh',
-      }}
-    >
-      {children}
-    </div>
-  )
+    <>
+      <Header />
+      <div className="w-dvw flex flex-row">
+        <div className="flex-auto" />
+        <div className="min-h-[calc(50vh)] min-w-7xl">{children}</div>
+        <div className="flex-auto" />
+      </div>
+      <Footer />
+    </>
+  );
 }
