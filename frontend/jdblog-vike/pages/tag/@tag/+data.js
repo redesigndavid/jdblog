@@ -15,5 +15,9 @@ async function data(pageContext) {
 
   const tags = respTags.data;
   const title = `${posts.length} Posts tagged with "${tag}"`;
+
+  config({
+    title: title,
+  });
   return { posts, tags, title };
 }
