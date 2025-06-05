@@ -16,9 +16,6 @@ function PostSection({ title, posts }) {
       <hr className="h-px my-2 border-2 border-slate-400/50 border-dashed" />
       <div className="flex flex-col gap-0.0 md:gap-0 ">
         {posts
-          .sort((b, a) => {
-            return Date.parse(a.created_date) - Date.parse(b.created_date);
-          })
           .map((post) => (
             <a
               href={`/blog/${post.id}/${post.title.toLowerCase().replace(/\s+/g, "-")}`}

@@ -1,3 +1,4 @@
+import { usePageContext } from "vike-react/usePageContext";
 
 export function TagDiv(props) {
   const {
@@ -16,6 +17,8 @@ export function TagDiv(props) {
 }
 
 function Tag({ tagname }) {
+  const pageContext = usePageContext();
+  const { track } = pageContext.globalContext;
 
   return (
     <>

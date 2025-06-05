@@ -5,11 +5,10 @@ import Highlight from "react-highlight";
 import rehypeRaw from "rehype-raw";
 import Image from "./Image";
 import mermaid from "mermaid";
+import Link from "./Link";
 import "./hljs.css";
 
-
 function Mermaid(props) {
-
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: true,
@@ -64,6 +63,7 @@ function MD({ children }) {
             code: WrapHighlight,
             pre: FlattenPre,
             img: Image,
+            a: Link,
           }}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}

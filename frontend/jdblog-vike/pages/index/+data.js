@@ -10,6 +10,7 @@ async function data(pageContext) {
 
   const posts = resp.data;
   resp.data.sort((b, a) => a.visits.length - b.visits.length);
+  console.log(resp.data);
   const popPosts = resp.data;
   const respTags = await API.get("/tag");
   const tags = respTags.data;

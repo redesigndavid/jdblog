@@ -6,7 +6,6 @@ async function data(pageContext) {
 
   const { id } = pageContext.routeParams;
   const resp = await API.get(`/article/post/${id}`)
-  console.log(resp)
 
   const post = resp.data;
   const comments = resp.data.comments;
