@@ -1,8 +1,10 @@
 export { data };
 
 import { API } from "/requester";
+import { useConfig } from "vike-react/useConfig";
 
 async function data(pageContext) {
+  const config = useConfig();
   const tag = pageContext.routeParams.tag;
   const resp = await API.get(`/tag/${tag}`);
   const posts = resp.data.articles;
