@@ -1,9 +1,9 @@
 # Build Stage
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY frontend/jdblog-vike/package*.json ./
+COPY frontend/jdblog/package*.json ./
 RUN npm install --force
-COPY frontend/jdblog-vike/. .
+COPY frontend/jdblog/. .
 RUN npm run build
 EXPOSE 3000
 CMD ["npm", "run", "prod"]

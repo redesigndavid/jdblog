@@ -1,8 +1,17 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import vike from "vike/plugin";
 import tailwindcss from "@tailwindcss/vite";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});
+export default {
+  plugins: [react(), vike(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@components": "/components",
+      "@utils": "/utils",
+    },
+  },
+  ssr: {
+    // Add problematic npm package here:
+    noExternal: ["dateformat"],
+  },
+};
