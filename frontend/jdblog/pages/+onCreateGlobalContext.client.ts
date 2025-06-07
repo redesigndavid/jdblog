@@ -1,5 +1,3 @@
-import { group } from "console";
-
 export function setDarkMode(darkMode) {
   if (darkMode != undefined) {
     document.getElementsByTagName("body")[0].classList.toggle("dark", darkMode);

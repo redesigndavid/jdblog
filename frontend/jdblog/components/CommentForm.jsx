@@ -19,37 +19,19 @@ function CommentForm({ articleId, addComment, kind, isLoggedIn }) {
     const access_token = JSON.parse(
       localStorage.getItem("loginInfo"),
     ).access_token;
-    console.log( { Authorization: `Bearer ${access_token}` })
-    const r = API.post(
+    API.post(
       `/article/${kind}/${id}/comment`,
       { text: data.comment },
       {
         headers: { Authorization: `Bearer ${access_token}` },
       },
     ).then((res) => {
-      console.log(res)
       if (res != undefined) {
         setFocus(false);
         addComment(res.data);
         setTimeout(reset, 10);
       }
     });
-    console.log(r);
-
-    console.log(data);
-    // requester(
-    //   "post",
-    //   `/article/${kind}/${articleId}/comment`,
-    //   { text: data.comment },
-    //   true,
-    //   (res) => {
-    //     if (res != undefined) {
-    //       setFocus(false);
-    //       addComment(res.data);
-    //       setTimeout(reset, 10);
-    //     }
-    //   },
-    // );
   };
 
   const [isFocus, setFocus] = useState(false);

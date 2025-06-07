@@ -7,7 +7,7 @@ import { FaRegCopyright } from "react-icons/fa";
 import { clientOnly } from "vike-react/clientOnly";
 import { BsCircleFill } from "react-icons/bs";
 import { usePageContext } from "vike-react/usePageContext";
-import Link from "@components/Link"
+import Link from "@components/Link";
 
 import { navigate, reload } from "vike/client/router";
 
@@ -37,7 +37,11 @@ function Footer() {
               <AiFillLinkedin size={28} />
             </Link>
 
-            <Link noVisits newTab href="https://www.instagram.com/redesigndavid">
+            <Link
+              noVisits
+              newTab
+              href="https://www.instagram.com/redesigndavid"
+            >
               <AiFillInstagram size={28} />
             </Link>
 
@@ -130,8 +134,6 @@ export function track(path, referrer, url) {
     article_type: article_type,
     article_id: article_id,
   };
-  console.log("tracking");
-  console.log(payload);
 
   API.post(`/visit`, payload)
     .catch((error) => {
@@ -153,7 +155,6 @@ function Layout({ children }) {
     localStorage.removeItem("loginInfo");
     reload();
   };
-
 
   if (pageContext.isClientSide) {
     pageContext.globalContext.logOut = logOut;
