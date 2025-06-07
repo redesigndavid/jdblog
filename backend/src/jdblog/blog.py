@@ -1,7 +1,7 @@
 import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
 from jdblog import auth, database
@@ -70,6 +70,10 @@ async def create_article(
     session: database.MakeSession,
     current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(
+            status_code=403, detail="User not allowed to create new articles."
+        )
     article.kind = kind
 
     if article.created_date is None:
@@ -90,7 +94,12 @@ async def update_article(
     kind: GetKind,
     session: database.MakeSession,
     article: database.Article,
+    current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(
+            status_code=403, detail="User not allowed to update articles."
+        )
     dbarticle = session.exec(
         select(
             database.Article,
@@ -124,8 +133,13 @@ async def set_article_tags(
     tags: list[str],
     kind: GetKind,
     session: database.MakeSession,
-    _current_user: auth.CurrentUser,
+    current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(
+            status_code=403, detail="User not allowed to set article tags."
+        )
+
     article = session.exec(
         select(database.Article).where(
             database.Article.id == article_id, database.Article.kind == kind
@@ -147,8 +161,10 @@ async def tag_article(
     tag: database.Tag,
     kind: GetKind,
     session: database.MakeSession,
-    _current_user: auth.CurrentUser,
+    current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(status_code=403, detail="User not allowed to tag articles.")
 
     article = session.exec(
         select(database.Article).where(
@@ -172,8 +188,13 @@ async def untag_article(
     tag: database.Tag,
     kind: GetKind,
     session: database.MakeSession,
-    _current_user: auth.CurrentUser,
+    current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(
+            status_code=403, detail="User not allowed to untag articles."
+        )
+
     article = session.exec(
         select(database.Article).where(
             database.Article.id == article_id, database.Article.kind == kind
@@ -198,8 +219,12 @@ async def delete_article(
     article_id: int,
     kind: GetKind,
     session: database.MakeSession,
-    _current_user: auth.CurrentUser,
+    current_user: auth.CurrentUser,
 ):
+    if current_user.user_type != database.UserType.admin:
+        raise HTTPException(
+            status_code=403, detail="User not allowed to untag articles."
+        )
 
     article = session.exec(
         select(database.Article).where(
