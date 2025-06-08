@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:20-alpine AS build
+FROM node:21-alpine AS build
 WORKDIR /app
 COPY frontend/jdblog/package*.json ./
 RUN npm install --force
