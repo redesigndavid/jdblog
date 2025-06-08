@@ -135,15 +135,10 @@ export function track(path, referrer, url) {
     article_id: article_id,
   };
 
-  API.post(`/visit`, payload)
-    .catch((error) => {
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    })
-    .then((res) => console.log("hello"));
+  await API.post(`/visit`, payload)
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
 }
 
 function Layout({ children }) {
