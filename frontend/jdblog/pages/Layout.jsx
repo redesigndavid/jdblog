@@ -135,7 +135,7 @@ export function track(path, referrer, url) {
     article_id: article_id,
   };
 
-  await API.post(`/visit`, payload)
+  API.post(`/visit`, payload)
     .catch(error => {
       console.error('Error fetching data:', error);
     });
